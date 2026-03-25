@@ -15,7 +15,7 @@ db:
 
 Desse modo, a aplicação subirá normalmente.
 
-## Para Subir Conteiner do BD no Docker
+## Para Subir Container do BD no Docker
 
 1. Vá até o diretório principal do projeto (o mesmo do pom.xml e compose.yaml)
 2. Crie um novo arquivo chamado **`.env`**.
@@ -44,7 +44,7 @@ Este projeto utiliza o **Mapbox GL JS** para renderizar os mapas interativos e c
 
 ### Configurando no Projeto (Frontend)
 
-Na raiz da pasta frontend, crie um arquivo chamado `.env.local` (caso ele ainda não exista). **Atenção:** Este arquivo não será commita ao Github pois já está no gitignore.
+Na raiz da pasta frontend, crie um arquivo chamado `.env.local` (caso ele ainda não exista). **Atenção:** Este arquivo não será commitado ao Github pois já está no gitignore.
 
 Adicione a seguinte linha ao arquivo, colando o token que você copiou:
 
