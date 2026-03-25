@@ -13,4 +13,21 @@ db:
   password: sua_senha_postgres
 ```
 
-Dessa modo, a aplicação subirá normalmente.
+Desse modo, a aplicação subirá normalmente.
+
+### Para rodar o compose
+
+1. Vá até o diretório principal do projeto (o mesmo do pom.xml e compose.yaml)
+2. Crie um novo arquivo chamado **`.env`**.
+3. Adicione as variáveis `DB_USER` e `DB_PASS` dentro do arquivo, seguindo a estrutura abaixo e substituindo com as suas credenciais locais do PostgreSQL:
+
+```env
+DB_USER=seu_usuario
+DB_PASS=sua_senha
+```
+
+Após isso, só rodar 
+```bash
+docker compose up -d
+``` 
+E o banco de dados irá subir.

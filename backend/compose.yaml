@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: rolenet-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: RoleNet
+    ports:
+      - "5432:5432"
