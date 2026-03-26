@@ -12,6 +12,7 @@ const DEFAULT_ZOOM = 12;
 interface Local {
     id: number;
     name: string;
+    time: string;
     latitude: number;
     longitude: number;
     category: string;
@@ -37,9 +38,7 @@ export default function Map({ locais }: MapProps) {
 
             const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
             if (!token) {
-                console.error(
-                "NEXT_PUBLIC_MAPBOX_TOKEN não está definido. Configure-o em .env.local."
-                );
+                console.error("NEXT_PUBLIC_MAPBOX_TOKEN não está definido. Configure-o em .env.local.");
                 return;
             }
 
@@ -54,12 +53,7 @@ export default function Map({ locais }: MapProps) {
 
             map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-            const popupContainer = document.createElement("div");
-            popupRoot = createRoot(popupContainer);
-            popupRoot.render(<PopupRole nomeLocal="Barzinho do IMD kkk" horario="20h00" />);
-
-            const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
-                .setDOMContent(popupContainer);
+            const bounds = new mapboxgl.LngLatBounds();
 
             locais.forEach((local) => {
                 const markerContainer = document.createElement("div");
@@ -69,11 +63,29 @@ export default function Map({ locais }: MapProps) {
                 
                 markerRoots.push(root);
 
+                const popupContainer = document.createElement("div");
+                popupRoot = createRoot(popupContainer);
+                popupRoot.render(<PopupRole nomeLocal={local.name} horario={local.time} />);
+
+                const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
+                    .setDOMContent(popupContainer);
+
                 new mapboxgl.Marker(markerContainer)
                     .setLngLat([local.longitude, local.latitude])
                     .setPopup(popup)
                     .addTo(map);
+
+                bounds.extend([local.longitude, local.latitude]);
             });
+
+            if (locais.length > 0) {
+                map.fitBounds(bounds, {
+                    padding: 60,
+                    maxZoom: 15,
+                    duration: 1000
+                });
+            }
+            
         };
 
         initMap();

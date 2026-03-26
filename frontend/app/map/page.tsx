@@ -1,33 +1,38 @@
 import Map from "@/components/map/Map";
 
+// Mock de dados para teste. Depois vamos buscar isso da API.
 const mockLocais = [
   {
     id: 1,
-    name: "Esquenta Universitário (Perto da UFRN)",
+    name: "Esquenta Universitário UFRN",
     latitude: -5.8324, 
     longitude: -35.2054,
-    category: "bar"
+    category: "bar",
+    time: "20h00"
   },
   {
     id: 2,
     name: "Samba histórico",
     latitude: -5.7808,
     longitude: -35.2023,
-    category: "cultural"
+    category: "cultural",
+    time: "21h00"
   },
   {
     id: 3,
     name: "Cervejaria Artesanal",
     latitude: -5.7891,
     longitude: -35.1972,
-    category: "restaurante"
+    category: "restaurante",
+    time: "19h30"
   },
   {
     id: 4,
     name: "Balada Fim de Noite",
     latitude: -5.8795,
     longitude: -35.1768,
-    category: "balada"
+    category: "balada",
+    time: "22h00"
   }
 ];
 
