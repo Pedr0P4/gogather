@@ -1,4 +1,4 @@
-package com.role.net.dto.User;
+package com.role.net.RoleNet.dto.User;
 
 import jakarta.validation.constraints.NotEmpty;
 

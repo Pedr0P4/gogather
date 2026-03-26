@@ -1,3 +1,3 @@
-package com.role.net.dto.User;
+package com.role.net.RoleNet.dto.User;
 
 public record LoginResponse(String token) {}
