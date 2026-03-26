@@ -12,15 +12,15 @@ const mockLocais = [
   },
   {
     id: 2,
-    name: "Samba histórico",
+    name: "Museu de Arte Contemporânea",
     latitude: -5.7808,
     longitude: -35.2023,
     category: "cultural",
-    time: "21h00"
+    time: "17h00"
   },
   {
     id: 3,
-    name: "Cervejaria Artesanal",
+    name: "Pizzaria do Zé",
     latitude: -5.7891,
     longitude: -35.1972,
     category: "restaurante",
@@ -28,7 +28,7 @@ const mockLocais = [
   },
   {
     id: 4,
-    name: "Balada Fim de Noite",
+    name: "Balada de Sexta",
     latitude: -5.8795,
     longitude: -35.1768,
     category: "balada",
