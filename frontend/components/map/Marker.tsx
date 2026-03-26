@@ -1,7 +1,6 @@
 import { Beer, Building2, LucideIcon, MapPin, Music, Utensils } from 'lucide-react';
 
 interface MarkerRoleProps {
-    name: string;
     category: string;
 }
 
@@ -13,7 +12,7 @@ const categoriasConfig: Record<string, { color: string; icon: LucideIcon }> = {
     default: { color: "bg-gray-500", icon: MapPin },
 };
 
-const MarkerRole = ({ name, category }: MarkerRoleProps) => {
+const MarkerRole = ({ category }: MarkerRoleProps) => {
     const { color, icon: Icon } = categoriasConfig[category] || categoriasConfig.default;
 
     return (

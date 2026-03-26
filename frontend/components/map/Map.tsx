@@ -59,7 +59,7 @@ export default function Map({ locais }: MapProps) {
                 const markerContainer = document.createElement("div");
                 const root = createRoot(markerContainer);
                 
-                root.render(<MarkerRole category={local.category} name={local.name} />);
+                root.render(<MarkerRole category={local.category} />);
                 
                 markerRoots.push(root);
 
