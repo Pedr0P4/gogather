@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import PopupRole from "./PopUp";
+import MarkerRole from "./Marker";
 
 const DEFAULT_CENTER: [number, number] = [-35.20551753609717, -5.832075313805946];
 const DEFAULT_ZOOM = 12;
@@ -15,6 +16,7 @@ export default function Map() {
 
         let map: any;
         let popupRoot: any;
+        let markerRoot: any;
 
         const initMap = async () => {
             const mapboxglModule = await import("mapbox-gl");
@@ -49,7 +51,11 @@ export default function Map() {
             const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
                 .setDOMContent(popupContainer);
 
-            new mapboxgl.Marker({ color: "#FF0000" })
+            const markerContainer = document.createElement("div");
+            markerRoot = createRoot(markerContainer);
+            markerRoot.render(<MarkerRole />);
+
+            new mapboxgl.Marker(markerContainer)
                 .setLngLat(DEFAULT_CENTER)
                 .setPopup(popup)
                 .addTo(map);
@@ -58,12 +64,9 @@ export default function Map() {
         initMap();
 
         return () => {
-            if (popupRoot) {
-                popupRoot.unmount();
-            }
-            if (map) {
-                map.remove();
-            }
+            if (popupRoot) popupRoot.unmount();
+            if (markerRoot) markerRoot.unmount();
+            if (map) map.remove();
         };
     }, []);
 
