@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @Entity
-@SequenceGenerator(name = "id_generator", sequenceName = "seq_user")
+@SequenceGenerator(name = "id_generator", sequenceName = "seq_user", allocationSize = 1)
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 

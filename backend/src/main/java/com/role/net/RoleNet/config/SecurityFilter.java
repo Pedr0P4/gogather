@@ -10,6 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.role.net.RoleNet.service.TokenService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +20,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-	private final TokenConfig tokenConfig;
+	private final TokenService tokenService;
 
-	public SecurityFilter(TokenConfig tokenConfig) {
-	    this.tokenConfig = tokenConfig;
+	public SecurityFilter(TokenService tokenService) {
+	this.tokenService = tokenService;
 	}
 
 	@Override
@@ -29,7 +31,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 	    String authorizedHeader = request.getHeader("Authorization");
 		if(Strings.isNotEmpty(authorizedHeader) && authorizedHeader.startsWith("Bearer ")){
 		    String token = authorizedHeader.substring("Bearer ".length());
-			Optional<JWTUserData> optUser = tokenConfig.validateToken(token);
+			Optional<JWTUserData> optUser = tokenService.validateToken(token);
 			if(optUser.isPresent()){
                 JWTUserData userData = optUser.get();
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userData, null, List.of());
