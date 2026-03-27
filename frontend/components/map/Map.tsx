@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 import MarkerRole from "./Marker";
 import PopupRole from "./PopUp";
+import type { Map as MapboxMap } from "mapbox-gl";
 
 const DEFAULT_CENTER: [number, number] = [-35.20551753609717, -5.832075313805946];
 const DEFAULT_ZOOM = 12;
@@ -28,9 +29,9 @@ export default function Map({ locais }: MapProps) {
     useEffect(() => {
         if (!mapContainerRef.current) return;
 
-        let map: any;
-        let popupRoot: any;
-        let markerRoots: any[] = [];
+        let map: MapboxMap | null = null;
+        let popupRoots: Root[] = [];
+        let markerRoots: Root[] = [];
 
         const initMap = async () => {
             const mapboxglModule = await import("mapbox-gl");
@@ -57,15 +58,14 @@ export default function Map({ locais }: MapProps) {
 
             locais.forEach((local) => {
                 const markerContainer = document.createElement("div");
-                const root = createRoot(markerContainer);
-                
-                root.render(<MarkerRole category={local.category} />);
-                
-                markerRoots.push(root);
+                const markerRoot = createRoot(markerContainer);
+                markerRoot.render(<MarkerRole category={local.category} />);
+                markerRoots.push(markerRoot);
 
                 const popupContainer = document.createElement("div");
-                popupRoot = createRoot(popupContainer);
+                const popupRoot = createRoot(popupContainer);
                 popupRoot.render(<PopupRole nomeLocal={local.name} horario={local.time} />);
+                popupRoots.push(popupRoot);
 
                 const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
                     .setDOMContent(popupContainer);
@@ -73,7 +73,7 @@ export default function Map({ locais }: MapProps) {
                 new mapboxgl.Marker(markerContainer)
                     .setLngLat([local.longitude, local.latitude])
                     .setPopup(popup)
-                    .addTo(map);
+                    .addTo(map!);
 
                 bounds.extend([local.longitude, local.latitude]);
             });
@@ -91,7 +91,7 @@ export default function Map({ locais }: MapProps) {
         initMap();
 
         return () => {
-            if (popupRoot) popupRoot.unmount();
+            popupRoots.forEach((root) => root.unmount());
             markerRoots.forEach((root) => root.unmount());
             if (map) map.remove();
         };
