@@ -1,0 +1,119 @@
+package com.role.net.RoleNet.controller;
+
+import com.role.net.RoleNet.dto.Auth.LoginRequest;
+import com.role.net.RoleNet.dto.Auth.RefreshRequest;
+import com.role.net.RoleNet.dto.Auth.RegisterUserRequest;
+import com.role.net.RoleNet.dto.Auth.RegisterUserResponse;
+import com.role.net.RoleNet.dto.Auth.TokenResponse;
+import com.role.net.RoleNet.dto.User.UserResponse;
+import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.service.AuthService;
+import com.role.net.RoleNet.service.TokenService;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
+    private final TokenService tokenService;
+
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            AuthService authService,
+            TokenService tokenService
+    ) {
+        this.authenticationManager = authenticationManager;
+        this.authService = authService;
+        this.tokenService = tokenService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+        @Valid @RequestBody LoginRequest request
+    ) {
+
+        UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(request.username(), request.password());
+        Authentication authentication = authenticationManager.authenticate(userAndPass);
+        User user = (User) authentication.getPrincipal();
+
+        String accessToken = tokenService.generateAccessToken(user);
+        String refreshToken = tokenService.generateRefreshToken(user);
+
+        ResponseCookie jwtCookie = tokenService.generateAccessTokenCookie(accessToken);
+        ResponseCookie refreshCookie = tokenService.generateRefreshTokenCookie(refreshToken);
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+            .body("Login efetuado com sucesso!");
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterUserResponse> register(
+        @Valid @RequestBody RegisterUserRequest request
+    ) {
+        User newUser = authService.registerUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            new RegisterUserResponse(
+                newUser.getUsername(),
+                newUser.getEmail())
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+        @CookieValue(name = "refreshToken", required = false) String refreshToken
+    ) {
+        if(refreshToken != null){
+            tokenService.revokeRefreshToken(refreshToken);
+        }
+
+        ResponseCookie deleteAccess = tokenService.generateCleanCookie("accessToken");
+        ResponseCookie deleteRefresh = tokenService.generateCleanCookie("refreshToken");
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, deleteAccess.toString())
+            .header(HttpHeaders.SET_COOKIE, deleteRefresh.toString())
+            .build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
+        TokenResponse tokenResponse = tokenService.updateTokens(refreshRequest.refreshToken());
+
+        ResponseCookie jwtCookie = tokenService.generateAccessTokenCookie(tokenResponse.accessToken());
+        ResponseCookie refreshCookie = tokenService.generateRefreshTokenCookie(tokenResponse.refreshToken());
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+            .body("Refresh feito!");
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<UserResponse> verify(
+        @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(
+            UserResponse.from(user)
+        );
+    }
+}

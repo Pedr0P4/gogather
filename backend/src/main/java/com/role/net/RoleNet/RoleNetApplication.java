@@ -3,7 +3,7 @@ package com.role.net.RoleNet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.role.net")
 public class RoleNetApplication {
 
 	public static void main(String[] args) {
