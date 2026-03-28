@@ -1,10 +1,11 @@
 package com.role.net.RoleNet.controller;
 
-import com.role.net.RoleNet.dto.User.LoginRequest;
-import com.role.net.RoleNet.dto.User.TokenResponse;
-import com.role.net.RoleNet.dto.User.RefreshRequest;
-import com.role.net.RoleNet.dto.User.RegisterUserRequest;
-import com.role.net.RoleNet.dto.User.RegisterUserResponse;
+import com.role.net.RoleNet.dto.Auth.LoginRequest;
+import com.role.net.RoleNet.dto.Auth.RefreshRequest;
+import com.role.net.RoleNet.dto.Auth.RegisterUserRequest;
+import com.role.net.RoleNet.dto.Auth.RegisterUserResponse;
+import com.role.net.RoleNet.dto.Auth.TokenResponse;
+import com.role.net.RoleNet.dto.User.UserResponse;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.AuthService;
 import com.role.net.RoleNet.service.TokenService;
@@ -18,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,10 +71,28 @@ public class AuthController {
         @Valid @RequestBody RegisterUserRequest request
     ) {
         User newUser = authService.registerUser(request);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            new RegisterUserResponse(newUser.getUsername(), newUser.getEmail())
+            new RegisterUserResponse(
+                newUser.getUsername(),
+                newUser.getEmail())
         );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+        @CookieValue(name = "refreshToken", required = false) String refreshToken
+    ) {
+        if(refreshToken != null){
+            tokenService.revokeRefreshToken(refreshToken);
+        }
+
+        ResponseCookie deleteAccess = tokenService.generateCleanCookie("accessToken");
+        ResponseCookie deleteRefresh = tokenService.generateCleanCookie("refreshToken");
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, deleteAccess.toString())
+            .header(HttpHeaders.SET_COOKIE, deleteRefresh.toString())
+            .build();
     }
 
     @PostMapping("/refresh")
@@ -84,5 +106,14 @@ public class AuthController {
             .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
             .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
             .body("Refresh feito!");
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<UserResponse> verify(
+        @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(
+            UserResponse.from(user)
+        );
     }
 }

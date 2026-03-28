@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.User;
+package com.role.net.RoleNet.dto.Auth;
 
 import java.time.LocalDate;
 
@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record RegisterUserRequest(
     @NotEmpty(message = "Username required") String username,
+    String displayName,
     @Email @NotEmpty(message = "E-mail required") String email,
     @NotEmpty(message = "Password required") String password,
     @NotNull(message = "Birth date required") LocalDate birthDate

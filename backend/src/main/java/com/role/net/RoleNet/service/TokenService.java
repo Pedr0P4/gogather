@@ -14,9 +14,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.role.net.RoleNet.config.JWTUserData;
-import com.role.net.RoleNet.dto.User.TokenResponse;
+import com.role.net.RoleNet.dto.Auth.TokenResponse;
 import com.role.net.RoleNet.entity.RefreshToken;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.repository.RefreshTokenRepository;
 
 @Service
@@ -73,6 +74,16 @@ public class TokenService {
             .maxAge(7*24*60*60)
             .sameSite("Strict")
             .build();
+	}
+
+	public ResponseCookie generateCleanCookie(String name) {
+	    return ResponseCookie.from(name, "").maxAge(0).build();
+	}
+
+	public void revokeRefreshToken(String token) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+            .orElseThrow(() -> new ResourceNotFoundException("Refresh token " + token + " não existe!"));
+        refreshTokenRepository.delete(refreshToken);
 	}
 
 	public Optional<JWTUserData> validateToken(String token) {

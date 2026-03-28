@@ -21,14 +21,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User extends BaseEntity implements UserDetails {
 
     @NotNull(message = "User username cannot be null!")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = true)
     private String displayName;
 
     @NotNull(message = "User email cannot be null!")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotNull(message = "User password cannot be null!")

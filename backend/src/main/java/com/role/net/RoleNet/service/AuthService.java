@@ -1,18 +1,14 @@
 package com.role.net.RoleNet.service;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.role.net.RoleNet.dto.User.LoginRequest;
-import com.role.net.RoleNet.dto.User.RegisterUserRequest;
-import com.role.net.RoleNet.dto.User.TokenResponse;
+import com.role.net.RoleNet.dto.Auth.RegisterUserRequest;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.exception.UniqueDataAlreadyInUseException;
 import com.role.net.RoleNet.repository.UserRepository;
 
 @Service
@@ -30,7 +26,17 @@ public class AuthService implements UserDetailsService {
     }
 
     public User registerUser(RegisterUserRequest registerUserRequest) {
+
+        if(userRepository.existsByEmail(registerUserRequest.email()))
+            throw new UniqueDataAlreadyInUseException("E-mail " + registerUserRequest.email() + " já em uso!");
+        if(userRepository.existsByUsername(registerUserRequest.username()))
+            throw new UniqueDataAlreadyInUseException("Username " + registerUserRequest.username() + " já em uso!");
+
         User newUser = new User();
+        String displayName = registerUserRequest.displayName();
+        newUser.setDisplayName(displayName == null || displayName.isBlank()
+                ? registerUserRequest.username()
+                : registerUserRequest.displayName());
         newUser.setUsername(registerUserRequest.username());
         newUser.setEmail(registerUserRequest.email());
         newUser.setPassword(encoder.encode(registerUserRequest.password()));
