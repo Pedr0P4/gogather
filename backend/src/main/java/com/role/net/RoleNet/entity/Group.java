@@ -1,6 +1,8 @@
 package com.role.net.RoleNet.entity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -8,6 +10,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -30,6 +33,10 @@ public class Group extends BaseEntity {
 
     @Column(name = "invite_code", unique = true, updatable = false, nullable = false)
     private String inviteCode;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("stopOrder ASC")
+    private List<EventStop> eventStops = new ArrayList<>();
 
     @PrePersist
     public void generateInviteCode() {
