@@ -38,6 +38,9 @@ public class Group extends BaseEntity {
     @OrderBy("stopOrder ASC")
     private List<EventStop> eventStops = new ArrayList<>();
 
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupImage> images = new ArrayList<>();
+
     @PrePersist
     public void generateInviteCode() {
         if (this.inviteCode == null || this.inviteCode.isEmpty()) {
