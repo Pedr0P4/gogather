@@ -6,8 +6,10 @@ import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.GroupMember;
 import com.role.net.RoleNet.entity.GroupRole;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.repository.GroupRepository;
 import com.role.net.RoleNet.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,7 @@ public class GroupService {
     @Transactional
     public CreateGroupResponse create(CreateGroupRequest request, Long userId) {
         User adminUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Group group = Group.builder()
                 .name(request.name())
