@@ -13,13 +13,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Entity
 @Table(name = "event_groups")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Group extends BaseEntity {
 
     @Column(nullable = false)
@@ -29,6 +35,7 @@ public class Group extends BaseEntity {
     private String description;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
     private Set<GroupMember> members = new HashSet<>();
 
     @Column(name = "invite_code", unique = true, updatable = false, nullable = false)
@@ -36,9 +43,11 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("stopOrder ASC")
+	@Builder.Default
     private List<EventStop> eventStops = new ArrayList<>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
     private List<GroupImage> images = new ArrayList<>();
 
     @PrePersist
