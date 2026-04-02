@@ -20,6 +20,8 @@ import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.repository.RefreshTokenRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TokenService {
 
@@ -44,7 +46,11 @@ public class TokenService {
 				.sign(algorithm);
 	}
 
+	@Transactional
 	public String generateRefreshToken(User user) {
+		refreshTokenRepository.deleteByUser(user);
+		refreshTokenRepository.flush();
+
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
