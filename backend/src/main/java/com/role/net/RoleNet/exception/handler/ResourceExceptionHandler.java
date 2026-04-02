@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.role.net.RoleNet.dto.Error.StandardErrorDTO;
 import com.role.net.RoleNet.exception.UniqueDataAlreadyInUseException;
+import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.exception.DataDoesntMatchException;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
 
@@ -59,6 +60,22 @@ public class ResourceExceptionHandler {
             Instant.now(),
             status.value(),
             "Dados não conferem",
+            e.getMessage(),
+            request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+	@ExceptionHandler(UserNotAGroupMemberException.class)
+    public ResponseEntity<StandardErrorDTO> userNotAGroupMember(
+        UserNotAGroupMemberException e,
+        HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        StandardErrorDTO err = new StandardErrorDTO(
+            Instant.now(),
+            status.value(),
+            "Usuário não é membro do grupo",
             e.getMessage(),
             request.getRequestURI());
 
