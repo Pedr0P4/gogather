@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -19,6 +20,7 @@ import com.role.net.RoleNet.entity.RefreshToken;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.repository.RefreshTokenRepository;
+
 
 @Service
 public class TokenService {
@@ -39,12 +41,16 @@ public class TokenService {
 	    return JWT.create()
 				.withClaim("userId", user.getId())
 				.withSubject(user.getUsername())
-				.withExpiresAt(Instant.now().plusSeconds(900))
+				.withExpiresAt(Instant.now().plusSeconds(1200))
 				.withIssuedAt(Instant.now())
 				.sign(algorithm);
 	}
 
+	@Transactional
 	public String generateRefreshToken(User user) {
+		refreshTokenRepository.deleteByUser(user);
+		refreshTokenRepository.flush();
+
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
@@ -60,7 +66,7 @@ public class TokenService {
             .httpOnly(true)
             .secure(true)
             .path("/")
-            .maxAge(15*60)
+            .maxAge(20*60)
             .sameSite("Strict")
             .build();
 	}

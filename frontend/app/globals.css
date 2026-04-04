@@ -152,4 +152,12 @@
 
   }
 
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+}
+
+.bg-gogather-gradient {
+  background: linear-gradient(90deg, #fbf2c7 0%, #cc241a 40%, #458588 70%, #fbf2c7 100%);
 }
