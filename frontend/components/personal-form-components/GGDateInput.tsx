@@ -59,7 +59,7 @@ export function GGDateInput({ label, name, isRequired = false, className }: Date
           const currentValue = field.value || "";
 
           return (
-            <div className="relative flex flex-row">
+            <div className="relative flex flex-row w-full">
               <PatternFormat
                 format="##/##/####"
                 mask="_"
