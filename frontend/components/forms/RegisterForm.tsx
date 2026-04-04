@@ -24,8 +24,21 @@ const RegisterSchema = z.object({
         // Valida se a data é válida (ex: evita 31/02/2024)
         return date instanceof Date && !isNaN(date.getTime()) &&
                date.getDate() === day && (date.getMonth() + 1) === month;
-      }, { message: "Data inválida" }),
-  password: z.string().min(8, "Mínimo de 8 caracteres")
+      }, { message: "Data inválida" })
+      .transform((val) => {
+          const [day, month, year] = val.split('/');
+          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }),
+  password: z.string().min(8, "Mínimo de 8 caracteres"),
+  repeatPassword: z.string(),
+})
+.refine((data) => data.password === data.repeatPassword, {
+  error: "As senhas não coincidem",
+  path: ["repeatPassword"],
+})
+.transform((data) => {
+  const { repeatPassword, ...rest } = data;
+  return rest;
 });
 
 type RegisterData = z.infer<typeof RegisterSchema>;
@@ -33,9 +46,10 @@ type RegisterData = z.infer<typeof RegisterSchema>;
 export function RegisterForm() {
   const router = useRouter();
   const onSubmit = async (data: RegisterData) => {
+    console.log(data);
     try {
       await api.post('/auth/register', data);
-      router.push('/map');
+      router.push('/login');
     } catch(error) {
       console.error("Erro no Axios:", error);
     }
