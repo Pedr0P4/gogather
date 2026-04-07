@@ -1,11 +1,11 @@
-import React from "react";
-import { MapPin, Calendar, AlignLeft, ArrowRight } from "lucide-react";
+import { EventFormData } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { EventFormData } from "@/app/types";
+import { AlignLeft, ArrowRight, Calendar, MapPin } from "lucide-react";
+import React from "react";
 interface Step1InfoProps {
   formData: EventFormData;
   handleInputChange: (
@@ -40,14 +40,14 @@ export function Step1Info({
               Nome do Rolê
             </Label>
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 pointer-events-none" />
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-gg-cyan pointer-events-none" />
               <Input
-                id="name"
-                name="name"
-                value={formData.name}
+                id="name" 
+                name="name" 
+                value={formData.name} 
                 onChange={handleInputChange}
-                placeholder="Ex: Passeio nas prais da zona sul..."
-                className="pl-11 py-6 bg-gray-50 border-gray-200 focus-visible:ring-gg-cyan rounded-xl text-lg"
+                placeholder="Ex: Rolê no barzinho sexta..."
+                className="pl-14 py-7 bg-gray-50 border border-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#458588] focus-visible:border-[#458588] focus-visible:ring-offset-0 rounded-xl text-lg transition-all shadow-sm"
               />
             </div>
           </div>
@@ -60,14 +60,14 @@ export function Step1Info({
               Data e Hora
             </Label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gg-cyan pointer-events-none" />
               <Input
-                id="date"
-                type="datetime-local"
-                name="date"
-                value={formData.date}
+                id="date" 
+                type="datetime-local" 
+                name="date" 
+                value={formData.date} 
                 onChange={handleInputChange}
-                className="pl-11 py-6 bg-gray-50 border-gray-200 focus-visible:ring-gg-cyan rounded-xl text-lg	 w-full block"
+                className="pl-14 py-7 bg-gray-50 border border-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#458588] focus-visible:border-[#458588] focus-visible:ring-offset-0 rounded-xl text-lg w-full block transition-all shadow-sm"
               />
             </div>
           </div>
@@ -81,14 +81,14 @@ export function Step1Info({
               <span className="text-gray-500">(opcional)</span>
             </Label>
             <div className="relative">
-              <AlignLeft className="absolute left-3 top-4 w-5 h-5 text-gray-400 pointer-events-none" />
+              <AlignLeft className="absolute left-3 top-4 w-5 h-5 text-gg-cyan pointer-events-none" />
               <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
+                id="description" 
+                name="description" 
+                value={formData.description} 
                 onChange={handleInputChange}
-                placeholder="Regras, dresscode, o que levar..."
-                className="pl-11 py-4 min-h-25 bg-gray-50 border-gray-200 focus-visible:ring-gg-cyan rounded-xl text-lg resize-none"
+                placeholder="Regras, o que levar, ponto de encontro exato..."
+                className="pl-14 py-5 min-h-[140px] bg-gray-50 border border-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#458588] focus-visible:border-[#458588] focus-visible:ring-offset-0 rounded-xl text-lg resize-none transition-all shadow-sm"
               />
             </div>
           </div>
@@ -98,7 +98,7 @@ export function Step1Info({
             disabled={!isValid}
             className="w-full py-6 mt-4 text-lg font-bold bg-[#cc241a] hover:bg-[#a81d15] disabled:bg-gray-300 text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
           >
-            Mapear Rota <ArrowRight className="w-5 h-5" />
+            Definir Rota <ArrowRight className="w-5 h-5" />
           </Button>
         </CardContent>
       </Card>

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { EventFormData, EventStop, Step } from "@/app/types";
 import { Step1Info } from "@/components/create-group/Step1Info";
-import { Step, EventFormData, EventStop } from "@/app/types";
 import StepIndicator from "@/components/create-group/StepIndicator";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
 
 export default function CreateRolePage() {
   const [step, setStep] = useState<Step>(1);
@@ -32,7 +32,7 @@ export default function CreateRolePage() {
           {step === 1 ? (
             <Link
               href="/"
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors group"
+              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group"
             >
               <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
@@ -44,7 +44,7 @@ export default function CreateRolePage() {
           ) : (
             <button
               onClick={() => setStep((prev) => (prev - 1) as Step)}
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors group"
+              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group"
             >
               <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">
                 <ArrowLeft className="w-5 h-5" />

@@ -1,6 +1,6 @@
 package com.role.net.RoleNet.dto.Group;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,5 +14,5 @@ public record CreateGroupRequest(
 	String description,
 
 	@NotBlank(message = "Event date is required")
-	LocalDateTime eventDate
+	Instant eventDate
 ) {}
