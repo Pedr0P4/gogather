@@ -1,5 +1,11 @@
 package com.role.net.RoleNet.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.role.net.RoleNet.dto.Group.CreateGroupRequest;
 import com.role.net.RoleNet.dto.Group.GroupDetailsResponse;
 import com.role.net.RoleNet.dto.Group.GroupResponse;
@@ -11,12 +17,6 @@ import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.repository.GroupRepository;
 import com.role.net.RoleNet.repository.UserRepository;
-
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GroupService {
@@ -37,7 +37,7 @@ public class GroupService {
         Group group = Group.builder()
                 .name(request.name())
                 .description(request.description())
-				.eventDate(request.eventDate())
+	        .eventDate(request.eventDate())
                 .build();
 
         GroupMember adminMember = GroupMember.builder()
