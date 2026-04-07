@@ -2,7 +2,7 @@ import { EventStop } from "@/app/types";
 import Map from "@/components/map/Map";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, MapPin, Search, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, MapPin, Plus, Search, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 
 interface Step2MapProps {
@@ -58,24 +58,29 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
       <div className="w-full md:w-[420px] h-full flex flex-col bg-white border-r border-gray-200 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.05)]">
         
         <div className="p-6 border-b border-gray-100 bg-white flex-shrink-0">
-          <h2 className="text-2xl font-bold mb-1 text-gray-900">Itinerário</h2>
+          <h2 className="text-2xl font-bold mb-1 text-gray-900">Defina a Rota</h2>
           <p className="text-gray-500 mb-6 text-sm">Busque e ordene as paradas do rolê.</p>
           
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Ex: Bar do Zé..."
-                className="pl-10 py-5 bg-white border-gray-200 focus-visible:ring-[#458588] focus-visible:border-[#458588] rounded-xl"
-              />
-            </div>
-            <Button 
+          <div className="relative w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gg-cyan pointer-events-none z-10" />
+            
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Ex: Bar do Zé, Restaurante..."
+              className="w-full pl-12 pr-14 py-7 bg-white border-gray-200 focus-visible:ring-2 focus-visible:ring-[#458588] focus-visible:border-[#458588] rounded-xl text-base shadow-inner transition-all"
+            />
+
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
               onClick={handleAddMockLocation}
-              className="bg-[#458588] hover:bg-[#346b6e] text-white rounded-xl h-auto px-4"
+              disabled={!searchTerm.trim()}
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 text-[#458588] hover:text-[#346b6e] hover:bg-[#458588]/10 disabled:opacity-30 rounded-lg transition-all"
             >
-              Add
+              <Plus className="w-6 h-6" strokeWidth={3} />
+              <span className="sr-only">Adicionar local</span>
             </Button>
           </div>
         </div>
@@ -144,7 +149,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
             disabled={stops.length === 0}
             className="flex-1 py-6 bg-[#cc241a] hover:bg-[#a81d15] disabled:bg-gray-300 text-white font-bold rounded-xl shadow-md transition-all text-lg"
           >
-            Avançar <ArrowRight className="w-5 h-5 ml-2" />
+            Finalizar <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
 

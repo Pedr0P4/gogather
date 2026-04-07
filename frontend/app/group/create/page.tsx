@@ -29,7 +29,7 @@ export default function CreateRolePage() {
   return (
     <main className=" h-screen bg-[#fbf2c7]/30 flex flex-col font-sans text-gray-900">
       <header className="w-full bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center justify-between">
           {step === 1 ? (
             <Link
               href="/"
@@ -55,11 +55,9 @@ export default function CreateRolePage() {
           )}
 
           <div className="hidden md:flex items-center gap-4 text-sm font-bold text-gray-400">
-            <div className="ml-auto">
               <StepIndicator current={step} />
-            </div>
           </div>
-        </div>
+        </div>  
       </header>
 
       <section
