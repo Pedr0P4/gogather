@@ -1,9 +1,9 @@
-import { EventStop } from "@/app/types";
+import { EventStop, PlaceDetails, PlaceSuggestion } from "@/app/types";
 import Map from "@/components/map/Map";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, MapPin, Plus, Search, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Loader2, MapPin, Search, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 interface Step2MapProps {
   stops: EventStop[];
@@ -14,6 +14,9 @@ interface Step2MapProps {
 
 export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
   const moveStop = (index: number, direction: "up" | "down") => {
     if (direction === "up" && index === 0) return;
@@ -30,19 +33,6 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
     setStops(stops.filter(stop => stop.id !== id));
   };
 
-  const handleAddMockLocation = () => {
-    const newStop: EventStop = {
-      id: crypto.randomUUID(),
-      name: searchTerm || "Novo Local Adicionado",
-      latitude: -5.83 + (Math.random() * 0.02 - 0.01),
-      longitude: -35.20 + (Math.random() * 0.02 - 0.01),
-      category: "bar",
-      time: "20:00"
-    };
-    setStops([...stops, newStop]);
-    setSearchTerm("");
-  };
-
   const locaisForMap = stops.map((stop, index) => ({
     id: index,
     name: stop.name,
@@ -52,12 +42,65 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
     category: stop.category || "default"
   }));
 
+  useEffect(() => {
+    const fetchAutocomplete = async () => {
+      if (!searchTerm.trim()) {
+        setSuggestions([]);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(searchTerm)}`);
+        const data = await res.json();
+        setSuggestions(data.suggestions || []);
+      } catch (error) {
+        console.error("Erro ao buscar locais:", error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const timerId = setTimeout(() => {
+      fetchAutocomplete();
+    }, 400);
+
+    return () => clearTimeout(timerId);
+  }, [searchTerm]);
+
+  const handleSelectPlace = async (placeId: string) => {
+    setIsAdding(true);
+    setSearchTerm("");
+    setSuggestions([]);
+
+    try {
+      const res = await fetch(`/api/places/details?placeId=${placeId}`);
+      const details: PlaceDetails = await res.json();
+
+      if (details.location) {
+        const newStop: EventStop = {
+          id: details.id,
+          name: details.displayName?.text || "Local sem nome",
+          latitude: details.location.latitude,
+          longitude: details.location.longitude,
+          category: details.primaryTypeDisplayName?.text || "Geral",
+          time: "A definir"
+        };
+        setStops([...stops, newStop]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar detalhes do local:", error);
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col md:flex-row animate-in fade-in duration-500">
       
       <div className="w-full md:w-[420px] h-full flex flex-col bg-white border-r border-gray-200 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.05)]">
         
-        <div className="p-6 border-b border-gray-100 bg-white flex-shrink-0">
+        <div className="p-6 border-b border-gray-100 bg-white flex-shrink-0 z-30">
           <h2 className="text-2xl font-bold mb-1 text-gray-900">Defina a Rota</h2>
           <p className="text-gray-500 mb-6 text-sm">Busque e ordene as paradas do rolê.</p>
           
@@ -67,21 +110,42 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Ex: Bar do Zé, Restaurante..."
+              placeholder="Ex: bares, restaurantes..."
               className="w-full pl-12 pr-14 py-7 bg-white border-gray-200 focus-visible:ring-2 focus-visible:ring-[#458588] focus-visible:border-[#458588] rounded-xl text-base shadow-inner transition-all"
             />
 
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              onClick={handleAddMockLocation}
-              disabled={!searchTerm.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 text-[#458588] hover:text-[#346b6e] hover:bg-[#458588]/10 disabled:opacity-30 rounded-lg transition-all"
-            >
-              <Plus className="w-6 h-6" strokeWidth={3} />
-              <span className="sr-only">Adicionar local</span>
-            </Button>
+            {(isSearching || isAdding) && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                <Loader2 className="w-5 h-5 text-[#458588] animate-spin" />
+              </div>
+            )}
+            {suggestions.length > 0 && (
+              <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white border border-gray-200 shadow-[0_20px_40px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden z-[100]">
+                <ul className="max-h-64 overflow-y-auto divide-y divide-gray-100">
+                  {suggestions.map((suggestion) => (
+                    <li key={suggestion.placePrediction.placeId}>
+                      <button
+                        onClick={() => handleSelectPlace(suggestion.placePrediction.placeId)}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 focus:bg-gray-50 outline-none transition-colors flex items-start gap-3 group"
+                      >
+                        <MapPin className="w-5 h-5 text-gray-400 group-hover:text-[#458588] shrink-0 mt-0.5 transition-colors" />
+                        
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-bold text-gray-900 truncate">
+                            {suggestion.placePrediction.structuredFormat.mainText.text}
+                          </span>
+                          {suggestion.placePrediction.structuredFormat.secondaryText?.text && (
+                            <span className="text-xs text-gray-500 truncate mt-0.5">
+                              {suggestion.placePrediction.structuredFormat.secondaryText.text}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
@@ -127,7 +191,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
 
                 <button 
                   onClick={() => removeStop(stop.id)}
-                  className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                  className="p-2 text-gray-300 hover:text-gg-cyan transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
