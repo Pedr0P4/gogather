@@ -1,5 +1,6 @@
 package com.role.net.RoleNet.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +50,9 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
     private List<GroupImage> images = new ArrayList<>();
+
+	@Column(name = "event_date", nullable = false)
+	private LocalDateTime eventDate;
 
     @PrePersist
     public void generateInviteCode() {

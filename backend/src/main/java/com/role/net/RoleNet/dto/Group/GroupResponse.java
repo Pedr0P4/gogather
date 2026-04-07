@@ -8,5 +8,6 @@ public record GroupResponse(
     String name,
     String description,
     String inviteCode,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+	LocalDateTime eventDate
 ) {}

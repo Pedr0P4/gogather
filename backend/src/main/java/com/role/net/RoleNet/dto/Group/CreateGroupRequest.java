@@ -1,5 +1,7 @@
 package com.role.net.RoleNet.dto.Group;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -9,5 +11,8 @@ public record CreateGroupRequest(
 	String name, 
 
 	@Size(max = 500, message = "Group description must be at most 500 characters")
-	String description
+	String description,
+
+	@NotBlank(message = "Event date is required")
+	LocalDateTime eventDate
 ) {}

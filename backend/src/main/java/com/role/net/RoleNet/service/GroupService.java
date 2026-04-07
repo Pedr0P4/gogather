@@ -37,6 +37,7 @@ public class GroupService {
         Group group = Group.builder()
                 .name(request.name())
                 .description(request.description())
+				.eventDate(request.eventDate())
                 .build();
 
         GroupMember adminMember = GroupMember.builder()
@@ -54,7 +55,8 @@ public class GroupService {
 			savedGroup.getName(),
 			savedGroup.getDescription(),
 			savedGroup.getInviteCode(),
-			savedGroup.getCreatedAt()
+			savedGroup.getCreatedAt(),
+			savedGroup.getEventDate()
         );
     }
 
@@ -65,7 +67,8 @@ public class GroupService {
 				group.getName(),
 				group.getDescription(),
 				group.getInviteCode(),
-				group.getCreatedAt()
+				group.getCreatedAt(),
+				group.getEventDate()
 			))
 			.toList();
     }
