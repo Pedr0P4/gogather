@@ -6,7 +6,7 @@ import { Sparkles, Link as LinkIcon, Map, Images, PlusCircle, MapPin, Send, Came
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col font-sans">
-      
+
       {/* hero */}
       <section className="relative min-h-screen flex flex-col bg-gogather-gradient overflow-hidden">
         <div className="absolute inset-0 bg-black/10 z-0"></div>
@@ -27,11 +27,11 @@ export default function Home() {
           </div>
 
           <div className="relative w-full h-[400px] md:h-[600px] flex justify-center items-center">
-            <Image 
-              src="/phone.svg" 
-              alt="Aplicativo GoGather rodando no celular" 
-              width={500} 
-              height={700} 
+            <Image
+              src="/phone.svg"
+              alt="Aplicativo GoGather rodando no celular"
+              width={500}
+              height={700}
               className="object-contain w-auto h-full drop-shadow-2xl hover:-translate-y-4 transition-transform duration-500"
               priority
             />
@@ -46,7 +46,7 @@ export default function Home() {
             Tudo que você precisa para o <span className="text-[#cc241a]">rolê perfeito</span>
           </h2>
           <p className="text-gray-600 mb-16 text-lg">Ferramentas simples e inteligentes para planejar, convidar e lembrar.</p>
-          
+
           <div className="grid md:grid-cols-4 gap-6">
             {[
               { title: "Roteiros com IA", desc: "Nossa IA sugere os melhores lugares baseados no gosto do grupo.", icon: Sparkles },
@@ -74,7 +74,7 @@ export default function Home() {
 
           <div className="relative">
             <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gray-300 transform -translate-x-1/2 z-0"></div>
-            
+
             <div className="space-y-12">
               {[
                 { step: 1, title: "Crie o Grupo", desc: "Dê um nome ao rolê, defina a data e chame nossa IA.", icon: PlusCircle },
@@ -140,7 +140,7 @@ export default function Home() {
               gogather
             </span>
           </div>
-          
+
           <div className="flex gap-6 text-sm text-gray-500 font-medium">
             <Link href="#" className="hover:text-[#cc241a] transition-colors">Termos de Uso</Link>
             <Link href="#" className="hover:text-[#cc241a] transition-colors">Privacidade</Link>
