@@ -2,6 +2,7 @@
 
 import { EventFormData, EventStop, Step } from "@/app/types";
 import { Step1Info } from "@/components/create-group/Step1Info";
+import { Step2Map } from "@/components/create-group/Step2Map";
 import StepIndicator from "@/components/create-group/StepIndicator";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -26,7 +27,7 @@ export default function CreateRolePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fbf2c7]/30 flex flex-col font-sans text-gray-900">
+    <main className=" h-screen bg-[#fbf2c7]/30 flex flex-col font-sans text-gray-900">
       <header className="w-full bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {step === 1 ? (
@@ -61,7 +62,13 @@ export default function CreateRolePage() {
         </div>
       </header>
 
-      <section className="flex-1 w-full max-w-7xl mx-auto p-6 flex flex-col items-center justify-center">
+      <section
+        className={`flex-1 w-full flex flex-col ${
+          step === 2
+            ? "h-[calc(100vh-73px)] overflow-hidden"
+            : "max-w-7xl mx-auto p-6 items-center justify-center"
+        }`}
+      >
         {step === 1 && (
           <Step1Info
             formData={formData}
@@ -71,9 +78,12 @@ export default function CreateRolePage() {
         )}
 
         {step === 2 && (
-          <div className="w-full text-center">
-            <p className="text-gray-400">Etapa 2</p>
-          </div>
+          <Step2Map 
+              stops={stops} 
+              setStops={setStops} 
+              onBack={() => setStep(1)} 
+              onNext={() => setStep(3)} 
+            />
         )}
 
         {step === 3 && (

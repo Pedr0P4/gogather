@@ -7,8 +7,10 @@ export interface EventFormData {
 }
 
 export interface EventStop {
-  id: string;
+  id: string; 
   name: string;
   latitude: number;
   longitude: number;
+  category?: string;
+  time?: string;
 }

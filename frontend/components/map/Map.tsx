@@ -1,10 +1,10 @@
 'use client';
 
+import type { Map as MapboxMap } from "mapbox-gl";
 import { useEffect, useRef } from "react";
 import { createRoot, Root } from "react-dom/client";
 import MarkerRole from "./Marker";
 import PopupRole from "./PopUp";
-import type { Map as MapboxMap } from "mapbox-gl";
 
 const DEFAULT_CENTER: [number, number] = [-35.20551753609717, -5.832075313805946];
 const DEFAULT_ZOOM = 12;
@@ -33,9 +33,14 @@ export default function Map({ locais }: MapProps) {
         let popupRoots: Root[] = [];
         let markerRoots: Root[] = [];
 
+        let isMounted = true; 
+        mapContainerRef.current.innerHTML = "";
+
         const initMap = async () => {
             const mapboxglModule = await import("mapbox-gl");
             const mapboxgl = mapboxglModule.default || mapboxglModule;
+
+            if (!isMounted) return;
 
             const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
             if (!token) {
@@ -91,9 +96,18 @@ export default function Map({ locais }: MapProps) {
         initMap();
 
         return () => {
-            popupRoots.forEach((root) => root.unmount());
-            markerRoots.forEach((root) => root.unmount());
-            if (map) map.remove();
+            isMounted = false;
+
+            setTimeout(() => {
+                popupRoots.forEach((root) => root.unmount());
+                markerRoots.forEach((root) => root.unmount());
+            }, 0);
+            
+            if (map) {
+                map.remove();
+            } else if (mapContainerRef.current) {
+                mapContainerRef.current.innerHTML = ""; 
+            }
         };
     }, [locais]);
 
