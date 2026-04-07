@@ -4,7 +4,7 @@ import { Bell, UserCircle } from 'lucide-react';
 
 // futuramente vou passar como prop ou adicionar algo como: const { user } = useAuth()
 // por enquanto, muda para 'true' para testar a visão do Dashboard e 'false' para a Landing Page
-const isUserLoggedIn = true; 
+const isUserLoggedIn = false; 
 
 export default function Navbar() {
   return (
