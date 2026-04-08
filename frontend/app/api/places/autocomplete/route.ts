@@ -29,7 +29,6 @@ export async function GET(request: Request) {
     });
 
     const data = await response.json();
-    console.log("RESPOSTA DO GOOGLE:", JSON.stringify(data, null, 2));
 
     if (!response.ok) {
       console.error("Erro retornado pelo Google Places API:", JSON.stringify(data, null, 2));
