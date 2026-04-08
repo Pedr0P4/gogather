@@ -36,7 +36,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
   const locaisForMap = stops.map((stop, index) => ({
     id: index,
     name: stop.name,
-    time: stop.time || "A definir",
+    time: stop.time || "Horário a definir",
     latitude: stop.latitude,
     longitude: stop.longitude,
     category: stop.category || "default"
@@ -84,7 +84,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
           latitude: details.location.latitude,
           longitude: details.location.longitude,
           category: details.primaryTypeDisplayName?.text || "Geral",
-          time: "A definir"
+          time: "Horário a definir"
         };
         setStops([...stops, newStop]);
       }
@@ -185,7 +185,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
                     {stop.name}
                   </div>
                   <div className="text-xs text-gray-500 mt-0.5">
-                    {stop.time || "Horário a definir"}
+                    {stop.category || "Categoria não definida"}
                   </div>
                 </div>
 

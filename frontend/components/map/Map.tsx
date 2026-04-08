@@ -1,7 +1,7 @@
 'use client';
 
-import type { Map as MapboxMap, Marker, LngLatBounds } from "mapbox-gl";
-import { useEffect, useRef, memo } from "react";
+import type { Map as MapboxMap, Marker } from "mapbox-gl";
+import { memo, useEffect, useRef } from "react";
 import { createRoot, Root } from "react-dom/client";
 import MarkerRole from "./Marker";
 import PopupRole from "./PopUp";
@@ -97,17 +97,21 @@ const Map = memo(function Map({ locais }: MapProps) {
             locais.forEach((local) => {
                 const markerContainer = document.createElement("div");
                 const markerRoot = createRoot(markerContainer);
-                markerRoot.render(<MarkerRole category={local.category} />);
+                markerRoot.render(<MarkerRole order={local.id + 1} />);
                 newRoots.push(markerRoot);
-
+                
                 const popupContainer = document.createElement("div");
                 const popupRoot = createRoot(popupContainer);
-                popupRoot.render(<PopupRole nomeLocal={local.name} horario={local.time} />);
+                const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setDOMContent(popupContainer);
+                popupRoot.render(
+                    <PopupRole 
+                    name={local.name} 
+                    category={local.category} 
+                    onClose={() => popup.remove()}
+                    />
+                );
                 newRoots.push(popupRoot);
-
-                const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
-                    .setDOMContent(popupContainer);
-
+                
                 const marker = new mapboxgl.Marker(markerContainer)
                     .setLngLat([local.longitude, local.latitude])
                     .setPopup(popup)
