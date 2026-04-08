@@ -3,13 +3,16 @@
 import { EventFormData, EventStop, Step } from "@/app/types";
 import { Step1Info } from "@/components/create-group/Step1Info";
 import { Step2Map } from "@/components/create-group/Step2Map";
+import { Step3Share } from "@/components/create-group/Step3Share";
 import StepIndicator from "@/components/create-group/StepIndicator";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
 export default function CreateRolePage() {
   const [step, setStep] = useState<Step>(1);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [generatedInviteCode, setGeneratedInviteCode] = useState<string>("");
 
   const [formData, setFormData] = useState<EventFormData>({
     name: "",
@@ -26,8 +29,64 @@ export default function CreateRolePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSubmitToBackend = async (): Promise<void> => {
+    setIsSubmitting(true);
+
+    const payload = {
+      name: formData.name,
+      date: formData.date,
+      description: formData.description,
+      stops: stops.map((stop, index) => ({
+        ...stop,
+        order: index + 1,
+      })),
+    };
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      
+      const response = await fetch(`${apiUrl}/group`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || "Falha na comunicação com o servidor.");
+      }
+
+      const data = (await response.json()) as { inviteCode: string };
+      
+      if (!data.inviteCode) {
+        throw new Error("O servidor não retornou um código de convite válido.");
+      }
+
+      setGeneratedInviteCode(data.inviteCode);
+      setStep(3);
+      
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Erro ao criar rolê:", error.message);
+        alert(`Erro ao criar rolê: ${error.message}`); 
+      } else {
+        console.error("Erro desconhecido:", error);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <main className=" h-screen bg-[#fbf2c7]/30 flex flex-col font-sans text-gray-900">
+      {isSubmitting && (
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-[100] flex flex-col items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
+          <p className="text-lg font-bold text-gray-800">Criando seu rolê...</p>
+        </div>
+      )}
       <header className="w-full bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
         <div className="flex items-center justify-between">
           {step === 1 ? (
@@ -80,14 +139,15 @@ export default function CreateRolePage() {
               stops={stops} 
               setStops={setStops} 
               onBack={() => setStep(1)} 
-              onNext={() => setStep(3)} 
+              onNext={handleSubmitToBackend} 
             />
         )}
 
         {step === 3 && (
-          <div className="w-full text-center">
-            <h1 className="text-3xl font-bold">Etapa 3</h1>
-          </div>
+          <Step3Share 
+            roleName={formData.name || "Novo Rolê"} 
+            inviteCode={generatedInviteCode} 
+          />
         )}
       </section>
     </main>

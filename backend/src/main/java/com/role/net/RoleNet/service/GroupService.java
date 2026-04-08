@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.role.net.RoleNet.dto.Group.CreateGroupRequest;
 import com.role.net.RoleNet.dto.Group.GroupDetailsResponse;
 import com.role.net.RoleNet.dto.Group.GroupResponse;
+import com.role.net.RoleNet.entity.EventStop;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.GroupMember;
 import com.role.net.RoleNet.entity.GroupRole;
@@ -34,10 +35,21 @@ public class GroupService {
         User adminUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        List<EventStop> eventStops = request.stops().stream()
+            .map(stopRequest -> EventStop.builder()
+                .name(stopRequest.name())
+                .latitude(stopRequest.latitude())
+                .longitude(stopRequest.longitude())
+                .category(stopRequest.category())
+                .stopOrder(stopRequest.order())
+                .build())
+            .toList();
+
         Group group = Group.builder()
                 .name(request.name())
                 .description(request.description())
-	        .eventDate(request.eventDate())
+	        .eventDate(request.date())
+                .eventStops(eventStops)
                 .build();
 
         GroupMember adminMember = GroupMember.builder()
