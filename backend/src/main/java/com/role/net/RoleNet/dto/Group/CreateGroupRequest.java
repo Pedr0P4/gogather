@@ -16,7 +16,7 @@ public record CreateGroupRequest(
 	@Size(max = 500, message = "Group description must be at most 500 characters")
 	String description,
 
-	@NotBlank(message = "Event date is required")
+	@NotNull(message = "Event date is required")
 	Instant date,
 
 	@Size(min = 1, message = "At least one event stop is required")

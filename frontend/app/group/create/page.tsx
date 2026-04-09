@@ -31,10 +31,12 @@ export default function CreateRolePage() {
 
   const handleSubmitToBackend = async (): Promise<void> => {
     setIsSubmitting(true);
+	console.log("data: " + formData.date);
+	const dateAsInstant = new Date(formData.date).toISOString();
 
     const payload = {
       name: formData.name,
-      date: formData.date,
+      date: dateAsInstant,
       description: formData.description,
       stops: stops.map((stop, index) => ({
         ...stop,
@@ -45,7 +47,7 @@ export default function CreateRolePage() {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
       
-      const response = await fetch(`${apiUrl}/group`, {
+      const response = await fetch(`${apiUrl}/groups`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +84,7 @@ export default function CreateRolePage() {
   return (
     <main className=" h-screen bg-[#fbf2c7]/30 flex flex-col font-sans text-gray-900">
       {isSubmitting && (
-        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-[100] flex flex-col items-center justify-center">
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-100 flex flex-col items-center justify-center">
           <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
           <p className="text-lg font-bold text-gray-800">Criando seu rolê...</p>
         </div>
