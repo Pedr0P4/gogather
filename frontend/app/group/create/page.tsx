@@ -5,6 +5,8 @@ import { Step1Info } from "@/components/create-group/Step1Info";
 import { Step2Map } from "@/components/create-group/Step2Map";
 import { Step3Share } from "@/components/create-group/Step3Share";
 import StepIndicator from "@/components/create-group/StepIndicator";
+import { api } from "@/lib/api";
+import axios from "axios";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -31,8 +33,8 @@ export default function CreateRolePage() {
 
   const handleSubmitToBackend = async (): Promise<void> => {
     setIsSubmitting(true);
-	console.log("data: " + formData.date);
-	const dateAsInstant = new Date(formData.date).toISOString();
+    console.log("data: " + formData.date);
+    const dateAsInstant = new Date(formData.date).toISOString();
 
     const payload = {
       name: formData.name,
@@ -45,34 +47,26 @@ export default function CreateRolePage() {
     };
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      
-      const response = await fetch(`${apiUrl}/groups`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await api.post("/groups", payload);
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || "Falha na comunicação com o servidor.");
-      }
+      const data = response.data as { inviteCode: string };
 
-      const data = (await response.json()) as { inviteCode: string };
-      
       if (!data.inviteCode) {
         throw new Error("O servidor não retornou um código de convite válido.");
       }
 
       setGeneratedInviteCode(data.inviteCode);
       setStep(3);
-      
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Erro ao criar rolê:", error.message);
-        alert(`Erro ao criar rolê: ${error.message}`); 
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Falha na comunicação com o servidor.";
+        console.error("Erro na API ao criar rolê:", errorMessage);
+        alert(`Erro ao criar rolê: ${errorMessage}`);
+      } else if (error instanceof Error) {
+        console.error("Erro interno ao criar rolê:", error.message);
+        alert(`Erro: ${error.message}`);
       } else {
         console.error("Erro desconhecido:", error);
       }
@@ -116,9 +110,9 @@ export default function CreateRolePage() {
           )}
 
           <div className="hidden md:flex items-center gap-4 text-sm font-bold text-gray-400">
-              <StepIndicator current={step} />
+            <StepIndicator current={step} />
           </div>
-        </div>  
+        </div>
       </header>
 
       <section
@@ -137,18 +131,18 @@ export default function CreateRolePage() {
         )}
 
         {step === 2 && (
-          <Step2Map 
-              stops={stops} 
-              setStops={setStops} 
-              onBack={() => setStep(1)} 
-              onNext={handleSubmitToBackend} 
-            />
+          <Step2Map
+            stops={stops}
+            setStops={setStops}
+            onBack={() => setStep(1)}
+            onNext={handleSubmitToBackend}
+          />
         )}
 
         {step === 3 && (
-          <Step3Share 
-            roleName={formData.name || "Novo Rolê"} 
-            inviteCode={generatedInviteCode} 
+          <Step3Share
+            roleName={formData.name || "Novo Rolê"}
+            inviteCode={generatedInviteCode}
           />
         )}
       </section>

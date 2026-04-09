@@ -100,7 +100,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
       
       <div className="w-full md:w-[420px] h-full flex flex-col bg-white border-r border-gray-200 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.05)]">
         
-        <div className="p-6 border-b border-gray-100 bg-white flex-shrink-0 z-30">
+        <div className="p-6 border-b border-gray-100 bg-white shrink-0 z-30">
           <h2 className="text-2xl font-bold mb-1 text-gray-900">Defina a Rota</h2>
           <p className="text-gray-500 mb-6 text-sm">Busque e ordene as paradas do rolê.</p>
           
@@ -111,16 +111,16 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Ex: bares, restaurantes..."
-              className="w-full pl-12 pr-14 py-7 bg-white border-gray-200 focus-visible:ring-2 focus-visible:ring-[#458588] focus-visible:border-[#458588] rounded-xl text-base shadow-inner transition-all"
+              className="w-full pl-12 pr-14 py-7 bg-white border-gray-200 focus-visible:ring-2 focus-visible:ring-gg-cyan focus-visible:border-gg-cyan rounded-xl text-base shadow-inner transition-all"
             />
 
             {(isSearching || isAdding) && (
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <Loader2 className="w-5 h-5 text-[#458588] animate-spin" />
+                <Loader2 className="w-5 h-5 text-gg-cyan animate-spin" />
               </div>
             )}
             {suggestions.length > 0 && (
-              <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white border border-gray-200 shadow-[0_20px_40px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden z-[100]">
+              <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white border border-gray-200 shadow-[0_20px_40px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden z-100">
                 <ul className="max-h-64 overflow-y-auto divide-y divide-gray-100">
                   {suggestions.map((suggestion) => (
                     <li key={suggestion.placePrediction.placeId}>
@@ -128,7 +128,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
                         onClick={() => handleSelectPlace(suggestion.placePrediction.placeId)}
                         className="w-full text-left px-4 py-3 hover:bg-gray-50 focus:bg-gray-50 outline-none transition-colors flex items-start gap-3 group"
                       >
-                        <MapPin className="w-5 h-5 text-gray-400 group-hover:text-[#458588] shrink-0 mt-0.5 transition-colors" />
+                        <MapPin className="w-5 h-5 text-gray-400 group-hover:text-gg-cyan shrink-0 mt-0.5 transition-colors" />
                         
                         <div className="flex flex-col min-w-0">
                           <span className="text-sm font-bold text-gray-900 truncate">
@@ -157,26 +157,26 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
             </div>
           ) : (
             stops.map((stop, index) => (
-              <div key={stop.id} className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-[#458588]/40 transition-all group">
+              <div key={stop.id} className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-gg-cyan/40 transition-all group">
                 
                 <div className="flex flex-col gap-1">
                   <button 
                     onClick={() => moveStop(index, "up")} 
                     disabled={index === 0} 
-                    className="text-gray-300 hover:text-[#458588] disabled:opacity-10 transition-colors"
+                    className="text-gray-300 hover:text-gg-cyan disabled:opacity-10 transition-colors"
                   >
                     <ChevronUp className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => moveStop(index, "down")} 
                     disabled={index === stops.length - 1} 
-                    className="text-gray-300 hover:text-[#458588] disabled:opacity-10 transition-colors"
+                    className="text-gray-300 hover:text-gg-cyan disabled:opacity-10 transition-colors"
                   >
                     <ChevronDown className="w-5 h-5" />
                   </button>
                 </div>
                 
-                <div className="flex-shrink-0 w-8 h-8 bg-[#cc241a] text-white rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
+                <div className="shrink-0 w-8 h-8 bg-[#cc241a] text-white rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
                   {index + 1}
                 </div>
 
@@ -200,7 +200,7 @@ export function Step2Map({ stops, setStops, onBack, onNext }: Step2MapProps) {
           )}
         </div>
 
-        <div className="flex-shrink-0 mt-auto z-20 p-6 border-t border-gray-200 bg-white flex gap-3 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+        <div className="shrink-0 mt-auto z-20 p-6 border-t border-gray-200 bg-white flex gap-3 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
           <Button 
             variant="outline"
             onClick={onBack}

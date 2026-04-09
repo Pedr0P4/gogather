@@ -27,19 +27,36 @@ public class SecurityFilter extends OncePerRequestFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-	    String authorizedHeader = request.getHeader("Authorization");
-		if(Strings.isNotEmpty(authorizedHeader) && authorizedHeader.startsWith("Bearer ")){
-		    String token = authorizedHeader.substring("Bearer ".length());
-			Optional<JWTUserData> optUser = tokenService.validateToken(token);
-			if(optUser.isPresent()){
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        String token = recoverToken(request);
+        
+        if (token != null) {
+            Optional<JWTUserData> optUser = tokenService.validateToken(token);
+            
+            if (optUser.isPresent()) {
                 JWTUserData userData = optUser.get();
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userData, null, List.of());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-			}
-			filterChain.doFilter(request, response);
-		} else {
-            filterChain.doFilter(request, response);
-		}
-	}
+            }
+        }
+        
+        filterChain.doFilter(request, response);
+    }
+
+    private String recoverToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                if ("accessToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        
+        return null;
+    }
 }

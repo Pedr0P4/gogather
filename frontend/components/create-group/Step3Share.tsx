@@ -15,7 +15,9 @@ export const Step3Share = ({ roleName, inviteCode }: StepShareProps) => {
   
   const [copied, setCopied] = useState<boolean>(false);
 
-  const inviteLink = `https://gogather.app/join/${inviteCode}`;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+  const inviteLink = `${apiUrl}/join/${inviteCode}`;
 
   const handleCopy = (): void => {
     navigator.clipboard.writeText(inviteLink);
@@ -35,20 +37,20 @@ export const Step3Share = ({ roleName, inviteCode }: StepShareProps) => {
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         
         <div className="text-center pt-10 pb-6 px-8">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 mx-auto mb-4">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-red-50 text-[#cc241a] mx-auto mb-4">
             <PartyPopper className="h-8 w-8" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Rolê criado com sucesso! 🎉</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Rolê criado com sucesso!</h2>
         </div>
 
         <div className="px-8 pb-8 space-y-6">
           
           <div className="space-y-4">
-            <p className="text-sm font-medium text-gray-500">Compartilhe o código para trazer novos amigos</p>
+            <p className="text-center text-sm font-medium text-gray-500">Compartilhe o código para convidar pessoas para o rolê.</p>
             
-            <div className="bg-gray-50 rounded-xl border-2 border-dashed border-indigo-200 p-5 text-center space-y-1">
+            <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gg-cyan p-5 text-center space-y-1">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Código de Convite</p>
-              <p className="text-3xl font-black tracking-[0.2em] text-indigo-600">{inviteCode}</p>
+              <p className="text-3xl font-black tracking-[0.2em] text-gg-cyan">{inviteCode}</p>
             </div>
             
             <div className="flex gap-3">
@@ -81,7 +83,7 @@ export const Step3Share = ({ roleName, inviteCode }: StepShareProps) => {
 
           <Button
             onClick={() => router.push("/dashboard")}
-            className="w-full h-12 text-base font-semibold bg-gray-900 hover:bg-gray-800 text-white rounded-xl gap-2 transition-colors mt-2"
+            className="w-full h-12 text-base font-semibold bg-[#cc241a] hover:bg-gray-800 text-white rounded-xl gap-2 transition-colors mt-2"
           >
             <ExternalLink className="h-5 w-5" />
             Ir para o painel do rolê
