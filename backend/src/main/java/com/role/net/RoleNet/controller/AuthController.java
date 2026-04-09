@@ -112,13 +112,12 @@ public class AuthController {
 
     @GetMapping("/verify")
     public ResponseEntity<UserResponse> verify(
-        @AuthenticationPrincipal JWTUserData userData
+        @AuthenticationPrincipal User user
     ) {
-		if (userData == null) {
+		if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        User user = authService.loadUserById(userData.userId());
         return ResponseEntity.ok(
             UserResponse.from(user)
         );

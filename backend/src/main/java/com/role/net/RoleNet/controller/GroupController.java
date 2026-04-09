@@ -3,6 +3,7 @@ package com.role.net.RoleNet.controller;
 import com.role.net.RoleNet.dto.Group.CreateGroupRequest;
 import com.role.net.RoleNet.dto.Group.GroupDetailsResponse;
 import com.role.net.RoleNet.dto.Group.GroupResponse;
+import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.GroupService;
 import com.role.net.RoleNet.config.JWTUserData; 
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,11 +35,10 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<GroupResponse> createGroup(
             @Valid @RequestBody CreateGroupRequest request,
-            Authentication authentication
+            @AuthenticationPrincipal User user
 	) {
         
-        JWTUserData userData = (JWTUserData) authentication.getPrincipal();
-        GroupResponse response = groupService.create(request, userData.userId());
+        GroupResponse response = groupService.create(request, user.getId());
         
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

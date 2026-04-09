@@ -79,7 +79,7 @@ export default function CreateRolePage() {
     <main className=" h-screen bg-[#fbf2c7]/30 flex flex-col font-sans text-gray-900">
       {isSubmitting && (
         <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-100 flex flex-col items-center justify-center">
-          <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
+          <Loader2 className="h-10 w-10 animate-spin text-[#cc241a] mb-4" />
           <p className="text-lg font-bold text-gray-800">Criando seu rolê...</p>
         </div>
       )}

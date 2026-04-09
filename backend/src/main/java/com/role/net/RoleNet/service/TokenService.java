@@ -48,7 +48,7 @@ public class TokenService {
 
 	@Transactional
 	public String generateRefreshToken(User user) {
-		refreshTokenRepository.deleteByUser(user);
+		refreshTokenRepository.deleteByUserId(user.getId());
 		refreshTokenRepository.flush();
 
         RefreshToken refreshToken = new RefreshToken();
