@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 };
 import localFont from 'next/font/local';
 import './globals.css';
+import { AuthProvider } from "@/context/AuthContext";
 
 const jakartaSans = localFont({
   src: [
@@ -37,7 +38,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${jakartaSans.variable} font-sans`}>
-        {children}
+		<AuthProvider>
+        	{children}
+		</AuthProvider>
       </body>
     </html>
   );
