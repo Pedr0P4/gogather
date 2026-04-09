@@ -35,39 +35,40 @@ public class GroupService {
         User adminUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<EventStop> eventStops = request.stops().stream()
-            .map(stopRequest -> EventStop.builder()
-                .name(stopRequest.name())
-                .latitude(stopRequest.latitude())
-                .longitude(stopRequest.longitude())
-                .category(stopRequest.category())
-                .stopOrder(stopRequest.order())
-                .build())
-            .toList();
-
         Group group = Group.builder()
-                .name(request.name())
-                .description(request.description())
-	        .eventDate(request.date())
-                .eventStops(eventStops)
-                .build();
+			.name(request.name())
+			.description(request.description())
+			.eventDate(request.date())
+			.build();
+
+		request.stops().forEach(stopRequest -> {
+            EventStop stop = EventStop.builder()
+				.name(stopRequest.name())
+				.latitude(stopRequest.latitude())
+				.longitude(stopRequest.longitude())
+				.category(stopRequest.category())
+				.stopOrder(stopRequest.order())
+				.group(group)
+				.build();
+            
+            group.getEventStops().add(stop);
+        });
 
         GroupMember adminMember = GroupMember.builder()
-                .group(group)
-                .user(adminUser)
-                .role(GroupRole.ADMIN)
-                .build();
+			.group(group)
+			.user(adminUser)
+			.role(GroupRole.ADMIN)
+			.build();
 
         group.getMembers().add(adminMember);
 
-        Group savedGroup = groupRepository.saveAndFlush(group);
+        Group savedGroup = groupRepository.save(group);
 
         return new GroupResponse(
 			savedGroup.getExternalId(),
 			savedGroup.getName(),
 			savedGroup.getDescription(),
 			savedGroup.getInviteCode(),
-			savedGroup.getCreatedAt(),
 			savedGroup.getEventDate()
         );
     }
@@ -79,7 +80,6 @@ public class GroupService {
 				group.getName(),
 				group.getDescription(),
 				group.getInviteCode(),
-				group.getCreatedAt(),
 				group.getEventDate()
 			))
 			.toList();
