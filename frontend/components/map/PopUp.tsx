@@ -1,21 +1,28 @@
-// Apenas um exemplo simples de componente de popup para o mapa
-// Iremos personalizar esse componente depois, mas por enquanto ele serve para mostrar como funciona a integração do React com o Mapbox GL JS
+import { X } from 'lucide-react';
+
 interface PopupRoleProps {
-  nomeLocal: string;
-  horario: string;
+  name: string;
+  category: string;
+  onClose?: () => void;
 }
 
-const PopupRole = ({ nomeLocal, horario }: PopupRoleProps) => {
+const PopupRole = ({ name, category, onClose }: PopupRoleProps) => {
   return (
-    <div className="p-2 w-48">
-      <h3 className="text-lg font-bold text-purple-700">{nomeLocal}</h3>
-      <p className="text-sm text-gray-600">Começa as {horario}</p>
-      <button 
-        onClick={() => alert(`Partiu ${nomeLocal}!`)}
-        className="mt-3 w-full bg-purple-600 text-white py-1 rounded hover:bg-purple-700 transition"
+    <div className="relative w-56 rounded-xl bg-white p-4 shadow-lg">
+      <button
+        onClick={onClose}
+        className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 active:scale-95"
+        aria-label="Fechar"
       >
-        Confirmar Presença
+        <X className="h-4 w-4 stroke-[2.5]" />
       </button>
+
+      <div className="pr-6">
+        <h3 className="text-lg font-bold text-gg-cyan" title={name}>
+          {name}
+        </h3>
+        <p className="text-sm text-gray-500 capitalize">{category}</p>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,11 @@
 package com.role.net.RoleNet.dto.Group;
 
+import java.time.Instant;
+import java.util.List;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CreateGroupRequest(
@@ -9,5 +14,13 @@ public record CreateGroupRequest(
 	String name, 
 
 	@Size(max = 500, message = "Group description must be at most 500 characters")
-	String description
+	String description,
+
+	@NotNull(message = "Event date is required")
+	Instant date,
+
+	@Size(min = 1, message = "At least one event stop is required")
+	@NotNull(message = "Event stops cannot be null")
+	@Valid
+	List<EventStopRequest> stops
 ) {}

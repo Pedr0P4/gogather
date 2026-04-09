@@ -96,8 +96,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<String> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
-        TokenResponse tokenResponse = tokenService.updateTokens(refreshRequest.refreshToken());
+    public ResponseEntity<String> refresh(@CookieValue(name = "refreshToken") String refreshToken) {
+        TokenResponse tokenResponse = tokenService.updateTokens(refreshToken);
 
         ResponseCookie jwtCookie = tokenService.generateAccessTokenCookie(tokenResponse.accessToken());
         ResponseCookie refreshCookie = tokenService.generateRefreshTokenCookie(tokenResponse.refreshToken());

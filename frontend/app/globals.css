@@ -159,6 +159,17 @@ body {
   font-family: var(--font-jakarta), sans-serif;
 }
 
+.mapboxgl-popup-content {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+}
+
 .bg-gogather-gradient {
   background: linear-gradient(90deg, #fbf2c7 0%, #cc241a 40%, #458588 70%, #fbf2c7 100%);
 }

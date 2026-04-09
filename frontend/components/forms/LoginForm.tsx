@@ -21,7 +21,8 @@ export function LoginForm() {
   const onSubmit = async (data: LoginData) => {
     try {
       await api.post('/auth/login', data);
-      router.push('/map');
+      router.push('/dashboard');
+	  router.refresh();
     } catch(error) {
       console.error("Erro no Axios:", error);
     }

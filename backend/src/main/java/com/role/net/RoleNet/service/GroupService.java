@@ -1,8 +1,15 @@
 package com.role.net.RoleNet.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.role.net.RoleNet.dto.Group.CreateGroupRequest;
 import com.role.net.RoleNet.dto.Group.GroupDetailsResponse;
 import com.role.net.RoleNet.dto.Group.GroupResponse;
+import com.role.net.RoleNet.entity.EventStop;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.GroupMember;
 import com.role.net.RoleNet.entity.GroupRole;
@@ -11,12 +18,6 @@ import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.repository.GroupRepository;
 import com.role.net.RoleNet.repository.UserRepository;
-
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GroupService {
@@ -35,26 +36,40 @@ public class GroupService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Group group = Group.builder()
-                .name(request.name())
-                .description(request.description())
-                .build();
+			.name(request.name())
+			.description(request.description())
+			.eventDate(request.date())
+			.build();
+
+		request.stops().forEach(stopRequest -> {
+            EventStop stop = EventStop.builder()
+				.name(stopRequest.name())
+				.latitude(stopRequest.latitude())
+				.longitude(stopRequest.longitude())
+				.category(stopRequest.category())
+				.stopOrder(stopRequest.order())
+				.group(group)
+				.build();
+            
+            group.getEventStops().add(stop);
+        });
 
         GroupMember adminMember = GroupMember.builder()
-                .group(group)
-                .user(adminUser)
-                .role(GroupRole.ADMIN)
-                .build();
+			.group(group)
+			.user(adminUser)
+			.role(GroupRole.ADMIN)
+			.build();
 
         group.getMembers().add(adminMember);
 
-        Group savedGroup = groupRepository.saveAndFlush(group);
+        Group savedGroup = groupRepository.save(group);
 
         return new GroupResponse(
 			savedGroup.getExternalId(),
 			savedGroup.getName(),
 			savedGroup.getDescription(),
 			savedGroup.getInviteCode(),
-			savedGroup.getCreatedAt()
+			savedGroup.getEventDate()
         );
     }
 
@@ -65,7 +80,7 @@ public class GroupService {
 				group.getName(),
 				group.getDescription(),
 				group.getInviteCode(),
-				group.getCreatedAt()
+				group.getEventDate()
 			))
 			.toList();
     }
