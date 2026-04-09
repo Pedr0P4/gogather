@@ -1,6 +1,7 @@
 package com.role.net.RoleNet.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.role.net.RoleNet.dto.User.UpdateUserRequest;
 import com.role.net.RoleNet.dto.User.UpdateUserResponse;
+import com.role.net.RoleNet.dto.User.UserResponse;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.UserService;
 
@@ -22,6 +24,16 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponse> getUserByUsername(
+        @PathVariable String username
+    ) {
+        return ResponseEntity
+            .ok(UserResponse
+                .from(userService.findByUsername(username))
+            );
     }
 
     @PostMapping("/update/{id}")
