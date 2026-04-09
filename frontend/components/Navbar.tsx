@@ -2,8 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Bell, UserCircle } from 'lucide-react';
 
-// futuramente vou passar como prop ou adicionar algo como: const { user } = useAuth()
-// por enquanto, muda para 'true' para testar a visão do Dashboard e 'false' para a Landing Page
 const isUserLoggedIn = false; 
 
 export default function Navbar() {
@@ -24,7 +22,6 @@ export default function Navbar() {
         </Link>
       </div>
        
-      {/* condicional de se tá logado ou não */}
       {!isUserLoggedIn ? (
         <>
           <div className="hidden md:flex items-center gap-8 text-white/90 font-medium">
@@ -35,14 +32,13 @@ export default function Navbar() {
             <Link href="/login" className="text-white font-bold hover:text-[#fbf2c7] transition-colors">
               Entrar
             </Link>
-            <Link href="/cadastro" className="bg-[#fbf2c7] text-[#cc241a] px-6 py-2 rounded-full font-bold hover:bg-white transition-all shadow-md">
+            <Link href="/register" className="bg-[#fbf2c7] text-[#cc241a] px-6 py-2 rounded-full font-bold hover:bg-white transition-all shadow-md">
               Cadastre-se
             </Link>
           </div>
         </>
       ) : (
         <>
-          {/*se tiver logado mostra os itens do app no navbar */}
           <div className="flex items-center gap-6 text-white">
             <button className="hover:text-[#fbf2c7] transition-colors relative">
               <Bell className="w-6 h-6" />

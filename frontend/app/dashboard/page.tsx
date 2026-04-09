@@ -1,4 +1,5 @@
 import { Plus, Sparkles, Map, MapPin, CalendarDays, Ticket, Users } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardHome() {
   return (
@@ -10,10 +11,13 @@ export default function DashboardHome() {
           <p className="text-gray-600 mt-2 text-lg">Acompanhe seus eventos e convites pendentes.</p>
         </div>
         
-        <button className="bg-[#cc241a] text-white px-6 py-3 rounded-full font-bold hover:bg-[#a81d15] hover:-translate-y-1 transition-all shadow-md flex items-center gap-2">
+        <Link 
+          href="/group/create" 
+          className="bg-[#cc241a] text-white px-6 py-3 rounded-full font-bold hover:bg-[#a81d15] hover:-translate-y-1 transition-all shadow-md flex items-center gap-2"
+        >
           <Plus className="w-5 h-5" />
           Novo Rolê
-        </button>
+        </Link>
       </div>
       {/* cards de stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -65,8 +69,11 @@ export default function DashboardHome() {
             </span>
           </button>
 
-          {/* opção de criar manualmente (futuramente poderá ser trocado por visualizar o mapa) */}
-          <button className="bg-white p-8 rounded-3xl shadow-sm border-2 border-transparent hover:border-[#cc241a] transition-all text-left group">
+          {/* opção de criar manualmente*/}
+		      <Link 
+            href="/group/create" 
+            className="bg-white p-8 rounded-3xl shadow-sm border-2 border-transparent hover:border-[#cc241a] transition-all text-left group block"
+          >
             <div className="w-14 h-14 bg-[#cc241a] text-white rounded-2xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform">
               <MapPin className="w-7 h-7" />
             </div>
@@ -77,7 +84,7 @@ export default function DashboardHome() {
             <span className="text-[#cc241a] font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
               Montar roteiro do zero →
             </span>
-          </button>
+          </Link>	
 
         </div>
       </div>

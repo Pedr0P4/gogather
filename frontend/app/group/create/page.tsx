@@ -83,35 +83,42 @@ export default function CreateRolePage() {
           <p className="text-lg font-bold text-gray-800">Criando seu rolê...</p>
         </div>
       )}
-      <header className="w-full bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
+	    <header className="w-full bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
         <div className="flex items-center justify-between">
-          {step === 1 ? (
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group"
-            >
-              <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">
-                <ArrowLeft className="w-5 h-5" />
-              </div>
-              <span className="font-bold text-lg tracking-tight">
-                Voltar ao Início
-              </span>
-            </Link>
-          ) : (
-            <button
-              onClick={() => setStep((prev) => (prev - 1) as Step)}
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group"
-            >
-              <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">
-                <ArrowLeft className="w-5 h-5" />
-              </div>
-              <span className="font-bold text-lg tracking-tight">Voltar</span>
-            </button>
-          )}
+          
+          <div className="flex-1 min-w-50">
+            {step === 1 && (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group w-fit"
+              >
+                <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">
+                  <ArrowLeft className="w-5 h-5" />
+                </div>
+                <span className="font-bold text-lg tracking-tight">
+                  Voltar ao Dashboard
+                </span>
+              </Link>
+            )}
+
+            {step === 2 && (
+              <button
+                onClick={() => setStep(1)}
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group w-fit"
+              >
+                <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">
+                  <ArrowLeft className="w-5 h-5" />
+                </div>
+                <span className="font-bold text-lg tracking-tight">Voltar</span>
+              </button>
+            )}
+          </div>
 
           <div className="hidden md:flex items-center gap-4 text-sm font-bold text-gray-400">
             <StepIndicator current={step} />
           </div>
+
+          <div className="flex-1 hidden md:block"></div>
         </div>
       </header>
 
