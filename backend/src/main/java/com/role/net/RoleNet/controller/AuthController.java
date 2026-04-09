@@ -1,5 +1,6 @@
 package com.role.net.RoleNet.controller;
 
+import com.role.net.RoleNet.config.JWTUserData;
 import com.role.net.RoleNet.dto.Auth.LoginRequest;
 import com.role.net.RoleNet.dto.Auth.RefreshRequest;
 import com.role.net.RoleNet.dto.Auth.RegisterUserRequest;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer.JwtConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -110,8 +112,13 @@ public class AuthController {
 
     @GetMapping("/verify")
     public ResponseEntity<UserResponse> verify(
-        @AuthenticationPrincipal User user
+        @AuthenticationPrincipal JWTUserData userData
     ) {
+		if (userData == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = authService.loadUserById(userData.userId());
         return ResponseEntity.ok(
             UserResponse.from(user)
         );

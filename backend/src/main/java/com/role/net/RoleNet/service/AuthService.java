@@ -51,4 +51,8 @@ public class AuthService implements UserDetailsService {
         return userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
+	public User loadUserById(Long id) throws UsernameNotFoundException {
+		return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("ID " + id));
+	}
+
 }
