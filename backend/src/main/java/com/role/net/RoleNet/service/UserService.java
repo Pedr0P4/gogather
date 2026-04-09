@@ -31,6 +31,11 @@ public class UserService {
         return user;
     }
 
+    public User fingByInternalId(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found."));
+    }
+
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
             .orElseThrow(() -> new ResourceNotFoundException("User " + username + " nor found."));

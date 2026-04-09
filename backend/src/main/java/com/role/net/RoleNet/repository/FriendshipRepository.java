@@ -28,8 +28,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
         (fs.requester.id = :userId2 AND fs.receiver.id = :userId1)
     """)
     Optional<Friendship> findFriendshipBetweenUsers(
-        Long requesterId,
-        Long receiverId
+        @Param("userId1") Long requesterId,
+        @Param("userId2") Long receiverId
     );
 
     @Query("""
