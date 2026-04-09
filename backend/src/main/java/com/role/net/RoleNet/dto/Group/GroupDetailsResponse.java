@@ -1,6 +1,6 @@
 package com.role.net.RoleNet.dto.Group;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +11,13 @@ public record GroupDetailsResponse(
     String name,
     String description,
     String inviteCode,
-    LocalDateTime createdAt,
+    Instant createdAt,
     List<MemberDTO> members
 ) {
     public record MemberDTO(
-		UUID externalId, 
-		String username, 
-		String displayName, 
+		UUID externalId,
+		String username,
+		String displayName,
 		GroupRole role,
 		String email
 	) {}

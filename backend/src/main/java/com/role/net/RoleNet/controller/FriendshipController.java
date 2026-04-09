@@ -1,5 +1,6 @@
 package com.role.net.RoleNet.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -26,14 +27,23 @@ public class FriendshipController {
         this.friendshipService = friendshipService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<FriendshipResponse>> getFriends(
+        @AuthenticationPrincipal User user
+    ) {
+        List<FriendshipResponse> friends = friendshipService
+            .friends(user.getId());
+        return ResponseEntity.ok(friends);
+    }
+
     @GetMapping("/{fsId}")
     public ResponseEntity<FriendshipResponse> requestDetails(
         @AuthenticationPrincipal User user,
         @PathVariable UUID fsId
     ) {
-        FriendshipResponse friendshipResponse = friendshipService
+        FriendshipResponse response = friendshipService
             .details(user.getId(), fsId);
-        return ResponseEntity.ok(friendshipResponse);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/send/{recId}")
@@ -41,11 +51,11 @@ public class FriendshipController {
         @AuthenticationPrincipal User user,
         @PathVariable UUID recId
     ) {
-        FriendshipResponse friendshipResponse = friendshipService
+        FriendshipResponse response = friendshipService
             .send(user.getId(), recId);
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(friendshipResponse);
+            .body(response);
     }
 
     @PatchMapping("/accept/{fsId}")
@@ -53,9 +63,9 @@ public class FriendshipController {
 	    @AuthenticationPrincipal User user,
 		@PathVariable UUID fsId
 	) {
-        FriendshipResponse friendshipResponse = friendshipService
+        FriendshipResponse response = friendshipService
             .accept(user.getId(), fsId);
-        return ResponseEntity.ok(friendshipResponse);
+        return ResponseEntity.ok(response);
 	}
 
 	@PatchMapping("/refuse/{fsId}")
@@ -63,8 +73,18 @@ public class FriendshipController {
 	    @AuthenticationPrincipal User user,
 		@PathVariable UUID fsId
 	) {
-        FriendshipResponse friendshipResponse = friendshipService
+        FriendshipResponse response = friendshipService
             .refuse(user.getId(), fsId);
-        return ResponseEntity.ok(friendshipResponse);
+        return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/unfriend/{fsId}")
+	public ResponseEntity<FriendshipResponse> unfriendRequest(
+	    @AuthenticationPrincipal User user,
+		@PathVariable UUID fsId
+	) {
+        FriendshipResponse response = friendshipService
+            .unfriend(user.getId(), fsId);
+        return ResponseEntity.ok(response);
 	}
 }

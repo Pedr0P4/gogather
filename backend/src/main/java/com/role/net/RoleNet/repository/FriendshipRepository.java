@@ -17,8 +17,31 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
     Optional<Friendship> findByExternalId(UUID id);
     Optional<Friendship> findByExternalIdAndRequesterId(UUID id, Long requesterId);
+    Optional<Friendship> findByExternalIdAndReceiverId(UUID id, Long receiverId);
 
-    List<Friendship> findByRequesterIdAndReceiverExternalId(Long requesterId, UUID receiverExternalId);
+    @Query("""
+        SELECT fs
+        FROM Friendship fs
+        WHERE
+        (fs.requester.id = :userId1 AND fs.receiver.id = :userId2)
+        OR
+        (fs.requester.id = :userId2 AND fs.receiver.id = :userId1)
+    """)
+    Optional<Friendship> findFriendshipBetweenUsers(
+        Long requesterId,
+        Long receiverId
+    );
+
+    @Query("""
+        SELECT fs
+        FROM Friendship fs
+        WHERE (fs.requester.id = :userId OR fs.receiver.id = :userId)
+          AND fs.status = :status
+    """)
+    List<Friendship> findByUserIdAndStatus(
+        @Param("userId") Long id,
+        @Param("status") FriendshipStatus status
+    );
 
     @Query("""
         SELECT COUNT(fs) > 0

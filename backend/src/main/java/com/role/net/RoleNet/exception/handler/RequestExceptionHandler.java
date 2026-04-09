@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.role.net.RoleNet.dto.Error.StandardErrorDTO;
+import com.role.net.RoleNet.exception.InvalidDataException;
 import com.role.net.RoleNet.exception.InvalidRequestException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RequestExceptionHandler {
 
     @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<StandardErrorDTO> badRequest(
+    public ResponseEntity<StandardErrorDTO> invalidRequest(
         InvalidRequestException e,
         HttpServletRequest request
     ) {
@@ -25,6 +26,22 @@ public class RequestExceptionHandler {
             Instant.now(),
             status.value(),
             "Requisição invalida",
+            e.getMessage(),
+            request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<StandardErrorDTO> invalidData(
+        InvalidDataException e,
+        HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardErrorDTO err = new StandardErrorDTO(
+            Instant.now(),
+            status.value(),
+            "Dado inválido",
             e.getMessage(),
             request.getRequestURI());
 

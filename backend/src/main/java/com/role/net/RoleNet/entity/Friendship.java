@@ -1,5 +1,6 @@
 package com.role.net.RoleNet.entity;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 import com.role.net.RoleNet.enums.FriendshipStatus;
@@ -33,6 +34,12 @@ public class Friendship extends BaseEntity {
 
     @Column(name = "friendship_date", nullable = true)
     private LocalDate friendshipDate;
+
+    @Column(name = "allow_send_at", nullable = true)
+    private Instant allowSendAt;
+
+    @Column(name = "days_interval", nullable = false)
+    private Integer daysInterval;
 
     @NotNull(message = "Friendship status cannot be null!")
     @Column(name = "status", nullable = false)
