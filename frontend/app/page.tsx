@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Sparkles, Link as LinkIcon, Map, Images, PlusCircle, MapPin, Send, Camera } from 'lucide-react'; // lembrar de instalar lucide-react (npm install lucid-react) e configurar no tsconfig.json para reconhecer os tipos
+import phoneImg from '../public/phone.svg';
 
 export default function Home() {
   return (
@@ -28,7 +29,7 @@ export default function Home() {
 
           <div className="relative w-full h-[400px] md:h-[600px] flex justify-center items-center">
             <Image
-              src="/phone.svg"
+              src={phoneImg}
               alt="Aplicativo GoGather rodando no celular"
               width={500}
               height={700}

@@ -1,6 +1,7 @@
+import { Bell, UserCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bell, UserCircle } from 'lucide-react';
+import logoImg from '../public/logo.svg';
 
 const isUserLoggedIn = false; 
 
@@ -10,7 +11,7 @@ export default function Navbar() {
       <div className="flex items-center">
         <Link href="/" className="flex items-center gap-1 hover:opacity-90 transition-opacity">
           <Image 
-            src="/logo.svg" 
+            src={logoImg} 
             alt="GoGather Logo" 
             width={40}
             height={35} 
