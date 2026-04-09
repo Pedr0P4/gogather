@@ -55,43 +55,4 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
         @Param("recid") Long receiverId,
         @Param("status") FriendshipStatus status
     );
-
-    @Query("""
-        SELECT COUNT(fs) > 0
-        FROM Friendship fs
-        WHERE fs.requester.id = :reqid
-          AND fs.receiver.externalId = :recid
-          AND fs.status = :status
-    """)
-    boolean checkRequest(
-        @Param("reqid") UUID requestId,
-        @Param("recid") UUID receiverId,
-        @Param("status") FriendshipStatus status
-    );
-
-    @Query("""
-        SELECT COUNT(fs) > 0
-        FROM Friendship fs
-        WHERE fs.requester.id = :reqid
-          AND fs.receiver.externalId = :recid
-          AND fs.status = :status
-    """)
-    boolean checkRequest(
-        @Param("reqid") Long requesterId,
-        @Param("recid") UUID receiverId,
-        @Param("status") FriendshipStatus status
-    );
-
-    @Query("""
-        SELECT COUNT(fs) > 0
-        FROM Friendship fs
-        WHERE fs.requester.id = :reqid
-          AND fs.receiver.externalId = :recid
-          AND fs.status = :status
-    """)
-    boolean checkRequest(
-        @Param("reqid") UUID requestId,
-        @Param("recid") Long receiverId,
-        @Param("status") FriendshipStatus status
-    );
 }
