@@ -1,11 +1,11 @@
 import React, { ElementType } from "react"
 
 interface DashInfoCardsProps {
-  children: React.ReactNode,
-  info: string,
-  color: 'cyan' | 'red' | 'beige',
-  className?: string
-  Icon?: ElementType
+  children: React.ReactNode;
+  info: string;
+  color: 'cyan' | 'red' | 'beige';
+  className?: string;
+  Icon?: ElementType;
 }
 
 const colors = {

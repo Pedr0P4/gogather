@@ -1,8 +1,8 @@
 import React from "react"
 
 interface DashSubHeaderProps {
-  children: React.ReactNode,
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 }
 
 export function DashSubHeader({ children, className }: DashSubHeaderProps) {

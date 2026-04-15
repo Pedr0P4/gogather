@@ -2,13 +2,13 @@ import Link from "next/link";
 import React, { ElementType } from "react";
 
 interface DashActionCardProps {
-  title: string
-  children: React.ReactNode,
-  footer: string,
-  color: 'cyan' | 'red' | 'beige',
-  href?: string,
-  className?: string,
-  Icon?: ElementType
+  title: string;
+  children: React.ReactNode;
+  footer: string;
+  color: 'cyan' | 'red' | 'beige';
+  href?: string;
+  className?: string;
+  Icon?: ElementType;
 }
 
 const colors = {

@@ -2,10 +2,10 @@ import Link from 'next/link';
 import React, { ElementType } from 'react';
 
 interface DashHeaderButtonProps {
-  children : React.ReactNode,
-  variant: 'dark' | 'light' | 'emerald' | 'red' | 'cyan' | 'beige',
-  href?: string,
-  Icon?: ElementType
+  children : React.ReactNode;
+  variant: 'dark' | 'light' | 'emerald' | 'red' | 'cyan' | 'beige';
+  href?: string;
+  Icon?: ElementType;
 }
 
 const variants = {
@@ -20,7 +20,7 @@ const variants = {
 export function DashHeaderButton({ children, variant, href = "/dashboard", Icon }: DashHeaderButtonProps) {
   return (
     <Link
-      href={href}
+      href={href ? href : '#'}
       className={
         `px-6 py-3 rounded-full font-bold hover:-translate-y-1
         transition-all shadow-md flex items-center gap-2

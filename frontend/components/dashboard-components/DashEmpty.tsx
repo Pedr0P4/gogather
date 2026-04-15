@@ -1,10 +1,10 @@
 import React, { ElementType } from "react"
 
 interface DashEmptyProps {
-  title: string,
-  children: React.ReactNode,
-  className?: string,
-  Icon?: ElementType
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  Icon?: ElementType;
 }
 
 export function DashEmpty({ title, children, className, Icon }: DashEmptyProps) {

@@ -1,9 +1,9 @@
 import React from "react"
 
 interface DashHeaderProps {
-  children: React.ReactNode,
-  className?: string,
-  description?: string
+  children: React.ReactNode;
+  className?: string;
+  description?: string;
 }
 
 export function DashHeader({ children, className, description = "" } : DashHeaderProps) {
