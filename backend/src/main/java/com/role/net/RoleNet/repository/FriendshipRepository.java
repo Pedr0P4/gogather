@@ -22,6 +22,14 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
         SELECT fs
         FROM Friendship fs
+        WHERE fs.requester.username = :username
+        OR fs.receiver.username = :username
+    """)
+    Optional<Friendship> findFriendshipByUsername(@Param("username") String username);
+
+    @Query("""
+        SELECT fs
+        FROM Friendship fs
         WHERE
         (fs.requester.id = :userId1 AND fs.receiver.id = :userId2)
         OR
@@ -30,6 +38,24 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     Optional<Friendship> findFriendshipBetweenUsers(
         @Param("userId1") Long requesterId,
         @Param("userId2") Long receiverId
+    );
+
+    @Query("""
+        SELECT fs
+        FROM Friendship fs
+        WHERE
+        (fs.requester.externalId = :userId1 AND fs.receiver.externalId = :userId2)
+        OR
+        (fs.requester.externalId = :userId2 AND fs.receiver.externalId = :userId1)
+    """)
+    Optional<Friendship> findFriendshipBetweenUsers(
+        @Param("userId1") UUID requesterId,
+        @Param("userId2") UUID receiverId
+    );
+
+    List<Friendship> findByReceiverIdAndStatus(
+        Long id,
+        FriendshipStatus status
     );
 
     @Query("""

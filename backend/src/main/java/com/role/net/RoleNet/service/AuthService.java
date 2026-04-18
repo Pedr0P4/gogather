@@ -28,9 +28,9 @@ public class AuthService implements UserDetailsService {
     public User registerUser(RegisterUserRequest registerUserRequest) {
 
         if(userRepository.existsByEmail(registerUserRequest.email()))
-            throw new UniqueDataAlreadyInUseException("E-mail " + registerUserRequest.email() + " já em uso!");
+            throw new UniqueDataAlreadyInUseException("E-mail '" + registerUserRequest.email() + "' já em uso!");
         if(userRepository.existsByUsername(registerUserRequest.username()))
-            throw new UniqueDataAlreadyInUseException("Username " + registerUserRequest.username() + " já em uso!");
+            throw new UniqueDataAlreadyInUseException("Username '" + registerUserRequest.username() + "' já em uso!");
 
         User newUser = new User();
         String displayName = registerUserRequest.displayName();

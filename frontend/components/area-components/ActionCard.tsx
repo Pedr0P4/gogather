@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { ElementType } from "react";
 
-interface DashActionCardProps {
+interface ActionCardProps {
   title: string;
   children: React.ReactNode;
   footer: string;
@@ -29,7 +29,7 @@ const colors = {
   },
 }
 
-export function DashActionCard({ title, children, footer, color, href, className, Icon }: DashActionCardProps) {
+export function ActionCard({ title, children, footer, color, href, className, Icon }: ActionCardProps) {
   return (
     <Link
         href={href ? href : '#'}

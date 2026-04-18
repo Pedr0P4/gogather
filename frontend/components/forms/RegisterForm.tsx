@@ -5,10 +5,14 @@ import { GGInput } from '../personal-form-components/GGInput';
 import { GGDateInput } from '../personal-form-components/GGDateInput';
 import { Form } from '../personal-form-components/Form';
 import { Button } from '../ui/button';
-import { CircleUserRound, KeyRound, Mail, AtSign, ShieldCheck } from 'lucide-react';
+import { CircleUserRound, KeyRound, Mail, AtSign, ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { StandardError } from '@/app/types';
 
 const RegisterSchema = z.object({
   username: z.string().min(6, "Mínimo de 6 caracteres"),
@@ -43,20 +47,41 @@ const RegisterSchema = z.object({
 
 type RegisterData = z.infer<typeof RegisterSchema>;
 
+
+
 export function RegisterForm() {
   const router = useRouter();
-  const onSubmit = async (data: RegisterData) => {
-    console.log(data);
-    try {
-      await api.post('/auth/register', data);
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const registerMutation = useMutation({
+    mutationFn: async (data: RegisterData) => {
+      return await api.post('/auth/register', data);
+    },
+    onSuccess: () => {
+      setErrorMessage(null);
       router.push('/login');
-    } catch(error) {
-      console.error("Erro no Axios:", error);
+    },
+    onError: (error: AxiosError<StandardError>) => {
+      const message = error.response?.data.message || "Erro inesperado!";
+      setErrorMessage(message);
     }
+  });
+
+  const onSubmit = (data: RegisterData) => {
+    registerMutation.mutate(data);
   }
 
   return (
     <Form schema={RegisterSchema} onSubmit={onSubmit} className="grid grid-cols-12 gap-x-4 center w-full">
+
+      {errorMessage && (
+        <div className="col-span-12 mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md flex items-center gap-2 text-sm font-medium">
+          <AlertCircle className="w-5 h-5 shrink-0" />
+          <p>{errorMessage}</p>
+        </div>
+      )}
+
       <GGInput name="username" Icon={AtSign} guideText="Username" className="col-span-12" isRequired/>
       <GGInput name="email" Icon={Mail} guideText="E-mail" type="email" className="col-span-12" isRequired/>
       <GGInput name="displayName" Icon={CircleUserRound} guideText="Display name" className="col-span-9"/>
@@ -67,10 +92,14 @@ export function RegisterForm() {
         <Link href={'/'} className='text-gg-cyan underline hover:text-gg-cyan-dark'>Voltar ao início</Link>
       </div>
       <Button type="submit"
+        disabled={registerMutation.isPending}
         className="col-start-4 col-span-6 bg-gg-beige-extralight
           border border-dotted border-gg-beige-extradark
         text-gg-beige-extradark mt-2 hover:cursor-pointer
-        hover:bg-gg-beige-light">Register</Button>
+        hover:bg-gg-beige-light">
+          {registerMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+          {registerMutation.isPending ? "Registrando..." : "Registrar-se"}
+        </Button>
     </Form>
   )
 }

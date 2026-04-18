@@ -1,13 +1,13 @@
 import React, { ElementType } from "react"
 
-interface DashEmptyProps {
+interface EmptyProps {
   title: string;
   children: React.ReactNode;
   className?: string;
   Icon?: ElementType;
 }
 
-export function DashEmpty({ title, children, className, Icon }: DashEmptyProps) {
+export function Empty({ title, children, className, Icon }: EmptyProps) {
   return (
     <div className={`bg-white/40 border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center flex flex-col items-center justify-center ${className}`}>
       {Icon && <Icon className="w-10 h-10 text-gray-400 mb-3" />}

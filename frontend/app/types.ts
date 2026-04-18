@@ -1,5 +1,13 @@
 export type Step = 1 | 2 | 3;
 
+export interface StandardError {
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  path: string;
+}
+
 export interface EventFormData {
   name: string;
   date: string;
@@ -7,7 +15,7 @@ export interface EventFormData {
 }
 
 export interface EventStop {
-  id: string; 
+  id: string;
   name: string;
   latitude: number;
   longitude: number;
@@ -45,4 +53,30 @@ export interface PlaceDetails {
   primaryTypeDisplayName?: {
     text: string;
   };
+}
+
+export interface FriendData {
+  fsExternalId: string;
+  friendExternalId: string;
+  friendUsername: string;
+  friendDisplayName: string;
+  status: string;
+}
+
+export interface FriendshipData {
+  fsExternalId: string;
+  requesterExternalId: string;
+  receiverExternalId: string;
+  requesterUsername: string;
+  receiverUsername: string;
+  friendshipDate: Date;
+  status: string;
+}
+
+export interface UserData {
+  externalId: string;
+  username: string;
+  displayName: string;
+  email: string;
+  birthDate: Date;
 }

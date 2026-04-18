@@ -8,11 +8,11 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const menuItems = [
-    { name: "Visão Geral", icon: LayoutDashboard, href: "/dashboard" },
-    { name: "Meus Rolês", icon: Map, href: "/dashboard/roles" },
-    { name: "Amigos", icon: Users, href: "/dashboard/amigos" },
-    { name: "Explorar IA", icon: Compass, href: "/dashboard/explorar" },
-    { name: "Convites", icon: Mail, href: "/dashboard/convites" },
+    { name: "Visão Geral", icon: LayoutDashboard, href: "dashboard" },
+    { name: "Meus Rolês", icon: Map, href: "roles" },
+    { name: "Amigos", icon: Users, href: "friends" },
+    { name: "Explorar IA", icon: Compass, href: "explore" },
+    { name: "Convites", icon: Mail, href: "invites" },
   ];
   return (
     <aside className="w-64 fixed left-0 top-[80px] h-[calc(100vh-80px)] bg-white border-r border-gray-100 shadow-sm flex flex-col justify-between py-6 z-40">
@@ -21,12 +21,12 @@ export default function Sidebar() {
           const isActive = pathname === item.href; //faz a verificação se a rota atual é a do item
 
           return (
-            <Link 
-              key={index} 
+            <Link
+              key={index}
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-                isActive 
-                  ? 'bg-[#fbf2c7] text-[#cc241a]' 
+                isActive
+                  ? 'bg-[#fbf2c7] text-[#cc241a]'
                   : 'text-gray-500 hover:bg-gray-50 hover:text-[#458588]'
               }`}
             >
@@ -35,10 +35,10 @@ export default function Sidebar() {
             </Link>
           );
         })}
-      </div>     
+      </div>
       {/* rodapé de configurações */}
       <div className="px-4">
-        <Link 
+        <Link
           href="/dashboard/configuracoes"
           className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
             pathname === "/dashboard/configuracoes"
