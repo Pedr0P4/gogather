@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.role.net.RoleNet.dto.Friendship.FriendshipResponse;
+import com.role.net.RoleNet.dto.Friendship.FriendshipSimpleResponse;
+import com.role.net.RoleNet.entity.Friendship;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.FriendshipService;
 
@@ -28,12 +30,39 @@ public class FriendshipController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FriendshipResponse>> getFriends(
+    public ResponseEntity<List<FriendshipSimpleResponse>> getFriends(
         @AuthenticationPrincipal User user
     ) {
-        List<FriendshipResponse> friends = friendshipService
+        List<FriendshipSimpleResponse> friends = friendshipService
             .friends(user.getId());
         return ResponseEntity.ok(friends);
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<FriendshipSimpleResponse>> getPending(
+        @AuthenticationPrincipal User user
+    ) {
+        List<Friendship> pending = friendshipService.pending(user.getId());
+        if(pending.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+            pending.stream()
+                .map(obj -> FriendshipSimpleResponse.from(obj.getRequester(), obj))
+                .toList()
+        );
+    }
+
+    @GetMapping("/find/{externalId}")
+    public ResponseEntity<FriendshipResponse> getFriendship(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID externalId
+    ) {
+        Friendship friendship = friendshipService.friendship(user.getExternalId(), externalId);
+
+        if(friendship == null) return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(
+          FriendshipResponse.from(friendship)
+        );
     }
 
     @GetMapping("/{fsId}")
@@ -51,11 +80,13 @@ public class FriendshipController {
         @AuthenticationPrincipal User user,
         @PathVariable UUID recId
     ) {
-        FriendshipResponse response = friendshipService
+        Friendship sent = friendshipService
             .send(user.getId(), recId);
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(response);
+            .body(
+                FriendshipResponse.from(sent)
+            );
     }
 
     @PatchMapping("/accept/{fsId}")

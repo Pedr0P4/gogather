@@ -1,12 +1,12 @@
 import React from "react"
 
-interface DashHeaderProps {
+interface HeaderProps {
   children: React.ReactNode;
   className?: string;
   description?: string;
 }
 
-export function DashHeader({ children, className, description = "" } : DashHeaderProps) {
+export function Header({ children, className, description = "" } : HeaderProps) {
   return (
     <div className={className}>
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{children}</h1>

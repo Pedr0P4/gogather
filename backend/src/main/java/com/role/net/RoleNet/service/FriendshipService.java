@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.role.net.RoleNet.dto.Friendship.FriendshipResponse;
+import com.role.net.RoleNet.dto.Friendship.FriendshipSimpleResponse;
 import com.role.net.RoleNet.entity.Friendship;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.enums.FriendshipStatus;
@@ -41,16 +42,43 @@ public class FriendshipService {
         return FriendshipResponse.from(friendship);
     }
 
-    public List<FriendshipResponse> friends(Long loggedUserId) {
+    public List<FriendshipSimpleResponse> friends(Long loggedUserId) {
         List<Friendship> friends = friendshipRepository
             .findByUserIdAndStatus(loggedUserId, FriendshipStatus.ACCEPTED);
         return friends.stream()
-            .map(obj -> FriendshipResponse.from(obj))
+            .map(obj -> {
+                User target;
+
+                if(obj.getRequester().getId().equals(loggedUserId))
+                    target = obj.getReceiver();
+                else
+                    target = obj.getRequester();
+
+                return new FriendshipSimpleResponse(
+                    obj.getExternalId(),
+                    target.getExternalId(),
+                    target.getUsername(),
+                    target.getDisplayName(),
+                    obj.getStatus());
+            })
             .toList();
     }
 
+    public List<Friendship> pending(Long loggedId) {
+        List<Friendship> pending = friendshipRepository
+            .findByReceiverIdAndStatus(loggedId, FriendshipStatus.PENDING);
+        return pending;
+    }
+
+    public Friendship friendship(UUID loggedExternalId, UUID externalId) {
+        Optional<Friendship> friendship = friendshipRepository
+            .findFriendshipBetweenUsers(loggedExternalId, externalId);
+        if(!friendship.isPresent()) return null;
+        return friendship.get();
+    }
+
     @Transactional
-    public FriendshipResponse send(Long requesterId, UUID receiverExternalId) {
+    public Friendship send(Long requesterId, UUID receiverExternalId) {
 
         User requester = userRepository.findById(requesterId)
             .orElseThrow(() -> new ResourceNotFoundException("Requester not found."));
@@ -87,7 +115,7 @@ public class FriendshipService {
                     obj.setFriendshipDate(null);
                     obj.setStatus(FriendshipStatus.PENDING);
 
-                    return FriendshipResponse.from(friendshipRepository.save(obj));
+                    return friendshipRepository.save(obj);
                 case UNFRIENDED:
                     obj.setRequester(requester);
                     obj.setReceiver(receiver);
@@ -96,7 +124,7 @@ public class FriendshipService {
                     obj.setFriendshipDate(null);
                     obj.setStatus(FriendshipStatus.PENDING);
 
-                    return FriendshipResponse.from(friendshipRepository.save(obj));
+                    return friendshipRepository.save(obj);
                	default:
               		throw new InvalidDataException("Friendship status is invalid.");
             }
@@ -110,7 +138,7 @@ public class FriendshipService {
             .daysInterval(0)
             .build();
 
-        return FriendshipResponse.from(friendshipRepository.save(friendship));
+        return friendshipRepository.save(friendship);
     }
 
     @Transactional

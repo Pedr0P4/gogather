@@ -1,6 +1,9 @@
 package com.role.net.RoleNet.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.role.net.RoleNet.dto.User.UpdateUserRequest;
 import com.role.net.RoleNet.dto.User.UpdateUserResponse;
-import com.role.net.RoleNet.dto.User.UserResponse;
+import com.role.net.RoleNet.dto.User.UserSearchResponse;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.UserService;
 
@@ -27,13 +30,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<UserResponse> getUserByUsername(
-        @PathVariable String username
+    @GetMapping("/{search}")
+    public ResponseEntity<List<UserSearchResponse>> getUserBySearch(
+        @AuthenticationPrincipal User user,
+        @PathVariable String search
     ) {
+        List<User> users = userService.findBySearch(search);
         return ResponseEntity
-            .ok(UserResponse
-                .from(userService.findByUsername(username))
+            .ok(users.stream()
+                .filter(obj -> !obj.getId().equals(user.getId()))
+                .map(UserSearchResponse::from)
+                .toList()
             );
     }
 

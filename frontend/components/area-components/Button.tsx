@@ -1,7 +1,7 @@
-import React, { ElementType } from "react";
+import React, { ButtonHTMLAttributes, ElementType } from "react";
 import { Button } from "../ui/button";
 
-interface DashButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant: 'dark' | 'light' | 'emerald' | 'red' | 'cyan' | 'beige';
   className?: string;
@@ -17,9 +17,9 @@ const variants = {
   beige: 'bg-gg-beige-midlight hover:bg-gg-beige-light text-gg-beige-extradark'
 }
 
-export function DashButton({ children, variant, className, Icon }: DashButtonProps) {
+export function PButton({ children, variant, className, Icon, ...props }: ButtonProps) {
   return (
-    <Button className={`hover:cursor-pointer shadow ${variants[variant]} ${className}`}>
+    <Button className={`hover:cursor-pointer shadow ${variants[variant]} ${className}`} {...props}>
       {Icon && <Icon className='w-3 h-3'/>}
       {children}
     </Button>

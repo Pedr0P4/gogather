@@ -1,6 +1,7 @@
 package com.role.net.RoleNet.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,9 +37,10 @@ public class UserService {
             .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found."));
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-            .orElseThrow(() -> new ResourceNotFoundException("User " + username + " nor found."));
+    public List<User> findBySearch(String search) {
+        List<User> users = userRepository.findByUsernameContainingIgnoreCase(search);
+        if(users.isEmpty()) throw new ResourceNotFoundException("Nenhum usuário com username contendo " + search);
+        return users;
     }
 
     @Transactional

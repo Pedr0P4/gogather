@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React, { ElementType } from 'react';
 
-interface DashHeaderButtonProps {
+interface HeaderButtonProps {
   children : React.ReactNode;
   variant: 'dark' | 'light' | 'emerald' | 'red' | 'cyan' | 'beige';
   href?: string;
@@ -17,7 +17,7 @@ const variants = {
   beige: 'bg-gg-beige-midlight hover:bg-gg-beige-light text-gg-beige-extradark'
 }
 
-export function DashHeaderButton({ children, variant, href = "/dashboard", Icon }: DashHeaderButtonProps) {
+export function HeaderButton({ children, variant, href, Icon }: HeaderButtonProps) {
   return (
     <Link
       href={href ? href : '#'}
