@@ -21,11 +21,9 @@ const RegisterSchema = z.object({
   birthDate: z.string()
       .min(10, "Data incompleta")
       .refine((val) => {
-        // Tenta converter a string DD/MM/YYYY para um objeto Date real
         const [day, month, year] = val.split('/').map(Number);
         const date = new Date(year, month - 1, day);
 
-        // Valida se a data é válida (ex: evita 31/02/2024)
         return date instanceof Date && !isNaN(date.getTime()) &&
                date.getDate() === day && (date.getMonth() + 1) === month;
       }, { message: "Data inválida" })

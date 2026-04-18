@@ -1,10 +1,7 @@
-import { UserRoundPlus, Book } from 'lucide-react'
 import { Header } from "@/components/area-components/Header";
-import { PButton } from "@/components/area-components/Button";
 import { Friends } from '@/components/friends-components/Friends';
 import { AddFriendButton } from '@/components/friends-components/AddFriendButton';
 import { PendingButton } from '@/components/friends-components/PendingButton';
-import { ResultSkeleton } from '@/components/friends-components/ResultSkeleton';
 
 export default function FriendsPage() {
   return (

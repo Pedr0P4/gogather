@@ -2,7 +2,6 @@
 
 import { RotateCw, ThumbsDown, UserRound, UserRoundX, Eye, MessageSquareMore } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useEffect, useState } from 'react';
 import { Empty } from '../area-components/Empty';
 import { FriendData } from '@/app/types';
 import { useQuery } from '@tanstack/react-query';

@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from "react"
 import { FriendData } from "@/app/types"
 import { api } from "@/lib/api"
 import { ResultSkeleton } from "./ResultSkeleton"
