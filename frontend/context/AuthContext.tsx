@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 export interface User {
   id: number;
   username: string;
+  displayName?: string;
   email: string;
 }
 
@@ -24,15 +25,18 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   const router = useRouter();
   const pathname = usePathname();
+  const isPublicRoute = pathname === "/" || pathname === "/login" || pathname === "/register";
 
   useEffect(() => {
     const verifyUser = async (): Promise<void> => {
+      setIsLoading(true);
+
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-        
+
         const response = await fetch(`${apiUrl}/auth/verify`, {
           method: "GET",
           credentials: "include",
@@ -43,27 +47,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setUser(userData);
         } else {
           setUser(null);
+
+          if (!isPublicRoute) {
+            router.replace("/login");
+          }
         }
       } catch (error) {
         console.error("Erro na autenticação:", error);
         setUser(null);
+
+        if (!isPublicRoute) {
+          router.replace("/login");
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     verifyUser();
-  }, [pathname]);
+  }, [pathname, isPublicRoute, router]);
 
   const logout = async (): Promise<void> => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      
+
       await fetch(`${apiUrl}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
-      
+
       setUser(null);
       router.push("/login");
     } catch (error) {
@@ -77,19 +89,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
-  
+
   return context;
 };

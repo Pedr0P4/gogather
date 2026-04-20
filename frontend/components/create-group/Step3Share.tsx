@@ -82,7 +82,7 @@ export const Step3Share = ({ roleName, inviteCode }: StepShareProps) => {
           </div>
 
           <Button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/area/dashboard")}
             className="w-full h-12 text-base font-semibold bg-[#cc241a] hover:bg-gray-800 text-white rounded-xl gap-2 transition-colors mt-2"
           >
             <ExternalLink className="h-5 w-5" />
