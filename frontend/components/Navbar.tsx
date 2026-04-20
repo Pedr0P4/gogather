@@ -1,39 +1,44 @@
-import { Bell, UserCircle } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import logoImg from '../public/logo.svg';
+"use client";
 
-const isUserLoggedIn = false; 
+import { Bell, LogOut, UserCircle } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import logoImg from "../public/logo.svg";
 
 export default function Navbar() {
+  const { user, isLoading, logout } = useAuth();
+  const displayName = user?.displayName?.trim() || user?.username || "Usuário";
+
   return (
     <nav className="w-full flex items-center justify-between p-4 md:p-6 fixed top-0 left-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10 shadow-sm transition-all">
       <div className="flex items-center">
         <Link href="/" className="flex items-center gap-1 hover:opacity-90 transition-opacity">
-          <Image 
-            src={logoImg} 
-            alt="GoGather Logo" 
-            width={40}
-            height={35} 
-            priority
-          />
-          <span className="text-white text-2xl md:text-3xl font-bold tracking-tight mt-1">
-            gogather
-          </span>
+          <Image src={logoImg} alt="GoGather Logo" width={40} height={35} priority />
+          <span className="text-white text-2xl md:text-3xl font-bold tracking-tight mt-1">gogather</span>
         </Link>
       </div>
-       
-      {!isUserLoggedIn ? (
+
+      {isLoading ? (
+        <div className="h-10 w-40 rounded-full border border-white/10 bg-white/5 animate-pulse" />
+      ) : !user ? (
         <>
           <div className="hidden md:flex items-center gap-8 text-white/90 font-medium">
-            <Link href="/#recursos" className="hover:text-white transition-colors">Recursos</Link>
-            <Link href="/#como-funciona" className="hover:text-white transition-colors">Como Funciona</Link>
+            <Link href="/#recursos" className="hover:text-white transition-colors">
+              Recursos
+            </Link>
+            <Link href="/#como-funciona" className="hover:text-white transition-colors">
+              Como Funciona
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-white font-bold hover:text-[#fbf2c7] transition-colors">
               Entrar
             </Link>
-            <Link href="/register" className="bg-[#fbf2c7] text-[#cc241a] px-6 py-2 rounded-full font-bold hover:bg-white transition-all shadow-md">
+            <Link
+              href="/register"
+              className="bg-[#fbf2c7] text-[#cc241a] px-6 py-2 rounded-full font-bold hover:bg-white transition-all shadow-md"
+            >
               Cadastre-se
             </Link>
           </div>
@@ -49,8 +54,16 @@ export default function Navbar() {
             </button>
             <div className="flex items-center gap-2 cursor-pointer hover:text-[#fbf2c7] transition-colors">
               <UserCircle className="w-8 h-8" />
-              <span className="font-bold hidden md:block">Flawbert</span>
+              <span className="font-bold hidden md:block">{displayName}</span>
             </div>
+            <button
+              type="button"
+              onClick={logout}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-white/10 hover:text-[#fbf2c7]"
+            >
+              <LogOut className="w-4 h-4" />
+              Sair
+            </button>
           </div>
         </>
       )}

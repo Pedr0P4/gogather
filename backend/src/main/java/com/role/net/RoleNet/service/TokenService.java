@@ -82,9 +82,16 @@ public class TokenService {
             .build();
 	}
 
-	public ResponseCookie generateCleanCookie(String name) {
-	    return ResponseCookie.from(name, "").maxAge(0).build();
-	}
+    public ResponseCookie generateCleanCookie(String name, String path) {
+        return ResponseCookie
+            .from(name, "")
+            .httpOnly(true)
+            .secure(true)
+            .path(path)
+            .maxAge(0)
+            .sameSite("Strict")
+            .build();
+    }
 
 	public void revokeRefreshToken(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)

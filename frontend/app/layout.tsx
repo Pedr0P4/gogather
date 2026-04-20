@@ -8,7 +8,7 @@ import { Providers } from "@/components/providers";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "RolêNet",
+  title: "GoGather",
   description: "Encontre e compartilhe os melhores rolês da cidade",
 };
 import localFont from 'next/font/local';

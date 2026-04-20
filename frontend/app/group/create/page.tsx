@@ -89,7 +89,7 @@ export default function CreateRolePage() {
           <div className="flex-1 min-w-50">
             {step === 1 && (
               <Link
-                href="/dashboard"
+                href="/area/dashboard"
                 className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group w-fit"
               >
                 <div className="bg-gray-100 p-2 rounded-lg group-hover:bg-gray-200 transition-colors">

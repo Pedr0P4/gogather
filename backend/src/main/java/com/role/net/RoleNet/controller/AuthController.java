@@ -85,8 +85,8 @@ public class AuthController {
             tokenService.revokeRefreshToken(refreshToken);
         }
 
-        ResponseCookie deleteAccess = tokenService.generateCleanCookie("accessToken");
-        ResponseCookie deleteRefresh = tokenService.generateCleanCookie("refreshToken");
+        ResponseCookie deleteAccess = tokenService.generateCleanCookie("accessToken", "/");
+        ResponseCookie deleteRefresh = tokenService.generateCleanCookie("refreshToken", "/auth/refresh");
 
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, deleteAccess.toString())

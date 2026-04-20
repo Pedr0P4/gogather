@@ -16,7 +16,7 @@ export function middleware(request: NextRequest): NextResponse {
   }
 
   if ((pathname === '/login' || pathname === '/register') && hasToken) {
-    const dashboardUrl = new URL('/dashboard', request.url);
+    const dashboardUrl = new URL('/area/dashboard', request.url);
     return NextResponse.redirect(dashboardUrl);
   }
 
