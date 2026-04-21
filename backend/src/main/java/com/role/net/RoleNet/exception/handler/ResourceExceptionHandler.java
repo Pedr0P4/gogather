@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.role.net.RoleNet.dto.Error.StandardErrorDTO;
 import com.role.net.RoleNet.exception.UniqueDataAlreadyInUseException;
 import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
+import com.role.net.RoleNet.dto.error.StandardErrorDTO;
 import com.role.net.RoleNet.exception.DataDoesntMatchException;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
 

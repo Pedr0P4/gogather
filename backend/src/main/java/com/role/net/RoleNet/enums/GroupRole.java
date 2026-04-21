@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.entity;
+package com.role.net.RoleNet.enums;
 
 public enum GroupRole {
     ADMIN,
