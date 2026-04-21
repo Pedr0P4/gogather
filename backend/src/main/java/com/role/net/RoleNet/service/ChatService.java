@@ -4,7 +4,9 @@ import com.role.net.RoleNet.entity.ChatMessage;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.enums.MessageType;
+import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.dto.chat.AiMentionEvent;
+import com.role.net.RoleNet.dto.chat.ChatMessageRequest;
 import com.role.net.RoleNet.dto.chat.ChatMessageResponse;
 import com.role.net.RoleNet.repository.ChatMessageRepository;
 import com.role.net.RoleNet.repository.GroupRepository;
@@ -36,27 +38,27 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatMessage saveMessage(Long groupId, Long userId, String content) {
+    public ChatMessage saveMessage(Long groupId, Long userId, ChatMessageRequest request) {
         
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Grupo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado"));
                 
         User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
 		ChatMessage message = ChatMessage.builder()
 				.group(group)
 				.sender(sender)
-				.content(content)
+				.content(request.content())
 				.type(MessageType.USER)
 				.build();
 
         ChatMessage savedMessage = chatMessageRepository.save(message);
 
-		// precisa rever se isso daqui faz sentido.
-		// depois vemos uma forma melhor de identificar menções para a IA
-        if (content.trim().toUpperCase().contains("@IA")) {
-            eventPublisher.publishEvent(new AiMentionEvent(groupId, content));
+		// o frontend envia um boolean dizendo se a mensagem requer resposta da IA
+		// depois vemos se é a melhor forma, mas acho que por enquanto está bom.
+        if (request.requiresAiResponse()) {
+            eventPublisher.publishEvent(new AiMentionEvent(groupId, request.content()));
         }
 
         return savedMessage;
@@ -65,7 +67,7 @@ public class ChatService {
 	@Transactional(readOnly = true)
 	public Page<ChatMessageResponse> getMessagesByGroup(Long groupId, Pageable pageable) {
 		if (!groupRepository.existsById(groupId)) {
-			throw new RuntimeException("Grupo não encontrado");
+			throw new ResourceNotFoundException("Grupo não encontrado");
 		}
 
 		return chatMessageRepository.findByGroupIdOrderByCreatedAtDesc(groupId, pageable)

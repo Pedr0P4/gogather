@@ -4,5 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record ChatMessageRequest(
     @NotBlank(message = "A mensagem não pode ser vazia")
-    String content
+    String content,
+
+	boolean requiresAiResponse
 ) {}

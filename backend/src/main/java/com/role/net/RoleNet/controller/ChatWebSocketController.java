@@ -30,7 +30,7 @@ public class ChatWebSocketController {
             @AuthenticationPrincipal User user
     ) {
         Long userId = user.getId();
-        ChatMessage savedMessage = chatService.saveMessage(groupId, userId, request.content());
+        ChatMessage savedMessage = chatService.saveMessage(groupId, userId, request);
 
         return ChatMessageResponse.from(savedMessage);
     }
