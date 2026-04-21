@@ -2,10 +2,14 @@ package com.role.net.RoleNet.controller;
 
 import com.role.net.RoleNet.dto.chat.ChatMessageRequest;
 import com.role.net.RoleNet.dto.chat.ChatMessageResponse;
+import com.role.net.RoleNet.dto.chat.TypingEvent;
 import com.role.net.RoleNet.entity.ChatMessage;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.ChatService;
 import jakarta.validation.Valid;
+
+import java.security.Principal;
+
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -33,5 +37,17 @@ public class ChatWebSocketController {
         ChatMessage savedMessage = chatService.saveMessage(groupId, userId, request);
 
         return ChatMessageResponse.from(savedMessage);
+    }
+
+	@MessageMapping("/chat/{groupId}/typing")
+    @SendTo("/topic/group/{groupId}/typing")
+    public TypingEvent handleTyping(
+            @DestinationVariable Long groupId,
+            @Payload TypingEvent request,
+            @AuthenticationPrincipal User user
+    ) {
+        String userName = user != null ? user.getUsername() : "User";
+        
+        return new TypingEvent(userName, request.isTyping());
     }
 }
