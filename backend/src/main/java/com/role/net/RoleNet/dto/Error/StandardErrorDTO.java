@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.Error;
+package com.role.net.RoleNet.dto.error;
 
 import java.time.Instant;
 

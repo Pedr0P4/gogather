@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.User;
+package com.role.net.RoleNet.dto.user;
 
 import com.role.net.RoleNet.entity.User;
 

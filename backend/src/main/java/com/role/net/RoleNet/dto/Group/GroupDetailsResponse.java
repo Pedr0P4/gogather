@@ -1,10 +1,10 @@
-package com.role.net.RoleNet.dto.Group;
+package com.role.net.RoleNet.dto.group;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import com.role.net.RoleNet.entity.GroupRole;
+import com.role.net.RoleNet.enums.GroupRole;
 
 public record GroupDetailsResponse(
     UUID externalId,

@@ -1,5 +1,7 @@
 package com.role.net.RoleNet.entity;
 
+import com.role.net.RoleNet.enums.GroupRole;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
