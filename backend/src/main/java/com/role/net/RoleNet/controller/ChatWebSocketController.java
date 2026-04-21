@@ -46,8 +46,6 @@ public class ChatWebSocketController {
             @Payload TypingEvent request,
             @AuthenticationPrincipal User user
     ) {
-        String userName = user != null ? user.getUsername() : "User";
-        
-        return new TypingEvent(userName, request.isTyping());
+        return new TypingEvent(user.getUsername(), request.isTyping());
     }
 }
