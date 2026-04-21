@@ -4,6 +4,8 @@ import { Bell, LogOut, UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { HeaderButton } from "@/components/area-components/HeaderButton";
+import { PButton } from "@/components/area-components/Button";
 import logoImg from "../public/logo.svg";
 
 export default function Navbar() {
@@ -32,16 +34,13 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-white font-bold hover:text-[#fbf2c7] transition-colors">
+            <HeaderButton href="/login" variant="dark">
               Entrar
-            </Link>
-            <Link
-              href="/register"
-              className="bg-[#fbf2c7] text-[#cc241a] px-6 py-2 rounded-full font-bold hover:bg-white transition-all shadow-md"
-            >
+            </HeaderButton>
+            <HeaderButton href="/register" variant="beige">	
               Cadastre-se
-            </Link>
-          </div>
+            </HeaderButton>
+          </div>		
         </>
       ) : (
         <>
@@ -56,14 +55,15 @@ export default function Navbar() {
               <UserCircle className="w-8 h-8" />
               <span className="font-bold hidden md:block">{displayName}</span>
             </div>
-            <button
+            <PButton
               type="button"
               onClick={logout}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-white/10 hover:text-[#fbf2c7]"
+              variant="cyan"
+              Icon={LogOut}
+              className="rounded-full px-4 py-2 text-sm font-bold"
             >
-              <LogOut className="w-4 h-4" />
               Sair
-            </button>
+            </PButton>
           </div>
         </>
       )}
