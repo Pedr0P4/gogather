@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.group;
+package com.role.net.RoleNet.dto.Group;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

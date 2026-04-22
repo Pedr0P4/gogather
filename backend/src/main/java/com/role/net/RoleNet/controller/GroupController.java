@@ -3,9 +3,9 @@ package com.role.net.RoleNet.controller;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.GroupService;
 import com.role.net.RoleNet.config.JWTUserData;
-import com.role.net.RoleNet.dto.group.CreateGroupRequest;
-import com.role.net.RoleNet.dto.group.GroupDetailsResponse;
-import com.role.net.RoleNet.dto.group.GroupResponse;
+import com.role.net.RoleNet.dto.Group.CreateGroupRequest;
+import com.role.net.RoleNet.dto.Group.GroupDetailsResponse;
+import com.role.net.RoleNet.dto.Group.GroupResponse;
 
 import jakarta.validation.Valid;
 

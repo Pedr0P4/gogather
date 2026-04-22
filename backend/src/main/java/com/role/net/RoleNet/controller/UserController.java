@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.role.net.RoleNet.dto.user.UpdateUserRequest;
-import com.role.net.RoleNet.dto.user.UpdateUserResponse;
-import com.role.net.RoleNet.dto.user.UserSearchResponse;
+import com.role.net.RoleNet.dto.User.UpdateUserRequest;
+import com.role.net.RoleNet.dto.User.UpdateUserResponse;
+import com.role.net.RoleNet.dto.User.UserSearchResponse;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.UserService;
 

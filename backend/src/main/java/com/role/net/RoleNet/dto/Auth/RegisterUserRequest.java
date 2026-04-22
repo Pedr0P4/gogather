@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.auth;
+package com.role.net.RoleNet.dto.Auth;
 
 import java.time.LocalDate;
 

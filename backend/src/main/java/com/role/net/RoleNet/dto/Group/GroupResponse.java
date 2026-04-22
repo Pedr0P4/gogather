@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.group;
+package com.role.net.RoleNet.dto.Group;
 
 import java.time.Instant;
 import java.util.UUID;

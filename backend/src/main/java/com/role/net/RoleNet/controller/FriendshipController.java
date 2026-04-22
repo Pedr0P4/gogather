@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.role.net.RoleNet.dto.friendship.FriendshipResponse;
-import com.role.net.RoleNet.dto.friendship.FriendshipSimpleResponse;
+import com.role.net.RoleNet.dto.Friendship.FriendshipResponse;
+import com.role.net.RoleNet.dto.Friendship.FriendshipSimpleResponse;
 import com.role.net.RoleNet.entity.Friendship;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.FriendshipService;

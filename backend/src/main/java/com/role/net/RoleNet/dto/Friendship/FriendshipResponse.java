@@ -1,4 +1,4 @@
-package com.role.net.RoleNet.dto.friendship;
+package com.role.net.RoleNet.dto.Friendship;
 
 import java.time.LocalDate;
 import java.util.UUID;

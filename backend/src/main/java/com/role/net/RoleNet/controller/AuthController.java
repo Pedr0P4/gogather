@@ -1,10 +1,10 @@
 package com.role.net.RoleNet.controller;
 
-import com.role.net.RoleNet.dto.auth.LoginRequest;
-import com.role.net.RoleNet.dto.auth.RegisterUserRequest;
-import com.role.net.RoleNet.dto.auth.RegisterUserResponse;
-import com.role.net.RoleNet.dto.auth.TokenResponse;
-import com.role.net.RoleNet.dto.user.UserResponse;
+import com.role.net.RoleNet.dto.Auth.LoginRequest;
+import com.role.net.RoleNet.dto.Auth.RegisterUserRequest;
+import com.role.net.RoleNet.dto.Auth.RegisterUserResponse;
+import com.role.net.RoleNet.dto.Auth.TokenResponse;
+import com.role.net.RoleNet.dto.User.UserResponse;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.AuthService;
 import com.role.net.RoleNet.service.TokenService;
