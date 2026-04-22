@@ -14,6 +14,8 @@ import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.GroupMember;
 import com.role.net.RoleNet.entity.GroupRole;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.enums.GroupMemberStatus;
+import com.role.net.RoleNet.exception.InvalidRequestException;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
 import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.repository.GroupRepository;
@@ -41,6 +43,8 @@ public class GroupService {
 			.eventDate(request.date())
 			.build();
 
+        Group savedGroup = groupRepository.save(group);
+
 		request.stops().forEach(stopRequest -> {
             EventStop stop = EventStop.builder()
 				.name(stopRequest.name())
@@ -48,28 +52,30 @@ public class GroupService {
 				.longitude(stopRequest.longitude())
 				.category(stopRequest.category())
 				.stopOrder(stopRequest.order())
-				.group(group)
+				.group(savedGroup) 
 				.build();
             
-            group.getEventStops().add(stop);
+            savedGroup.getEventStops().add(stop);
         });
 
         GroupMember adminMember = GroupMember.builder()
-			.group(group)
+			.group(savedGroup)
 			.user(adminUser)
 			.role(GroupRole.ADMIN)
+            .status(com.role.net.RoleNet.enums.GroupMemberStatus.ACTIVE)
+            .invitedBy(null) 
 			.build();
 
-        group.getMembers().add(adminMember);
+        savedGroup.getMembers().add(adminMember);
 
-        Group savedGroup = groupRepository.save(group);
+        Group updatedGroup = groupRepository.save(savedGroup);
 
         return new GroupResponse(
-			savedGroup.getExternalId(),
-			savedGroup.getName(),
-			savedGroup.getDescription(),
-			savedGroup.getInviteCode(),
-			savedGroup.getEventDate()
+			updatedGroup.getExternalId(),
+			updatedGroup.getName(),
+			updatedGroup.getDescription(),
+			updatedGroup.getInviteCode(),
+			updatedGroup.getEventDate()
         );
     }
 
@@ -113,4 +119,77 @@ public class GroupService {
 			members
         );
     }
+
+	@Transactional
+    public void joinGroupByInviteCode(String inviteCode, User loggedInUser) {
+        Group group = groupRepository.findByInviteCode(inviteCode)
+            .orElseThrow(() -> new ResourceNotFoundException("Rolê não encontrado com esse código."));
+
+        boolean alreadyMember = group.getMembers().stream() 
+            .anyMatch(member -> member.getUser().getId().equals(loggedInUser.getId()));
+
+        if (alreadyMember) {
+            throw new InvalidRequestException("Você já faz parte deste rolê!");
+        }
+
+        GroupMember newMember = new GroupMember();
+        newMember.setGroup(group);
+        newMember.setUser(loggedInUser);
+        newMember.setStatus(GroupMemberStatus.ACTIVE);
+        newMember.setInvitedBy(null);
+        
+        newMember.setRole(GroupRole.MEMBER); 
+
+        group.getMembers().add(newMember);
+        groupRepository.save(group);
+    }
+
+    @Transactional
+    public void inviteFriendToGroup(UUID groupId, UUID friendId, User loggedInUser) {
+        Group group = groupRepository.findByExternalId(groupId)
+            .orElseThrow(() -> new ResourceNotFoundException("Rolê não encontrado."));
+
+        User friend = userRepository.findByExternalId(friendId)
+            .orElseThrow(() -> new ResourceNotFoundException("Amigo não encontrado."));
+
+        // AFAZER verificar aqui no FriendshipRepository se eles realmente são amigos
+
+        boolean alreadyMember = group.getMembers().stream()
+            .anyMatch(member -> member.getUser().getExternalId().equals(friendId));
+
+        if (alreadyMember) {
+            throw new InvalidRequestException("Esse usuário já está no rolê ou já foi convidado.");
+        }
+
+        GroupMember newMember = new GroupMember();
+        newMember.setGroup(group);
+        newMember.setUser(friend);
+        newMember.setStatus(GroupMemberStatus.PENDING);
+        newMember.setInvitedBy(loggedInUser);
+        
+        newMember.setRole(GroupRole.MEMBER); 
+
+        group.getMembers().add(newMember);
+        groupRepository.save(group);
+    }
+
+    @Transactional
+    public void acceptGroupInvite(UUID groupId, User loggedInUser) {
+        Group group = groupRepository.findByExternalId(groupId)
+            .orElseThrow(() -> new ResourceNotFoundException("Rolê não encontrado."));
+
+        GroupMember invite = group.getMembers().stream()
+            .filter(member -> member.getUser().getId().equals(loggedInUser.getId()))
+            .findFirst()
+            .orElseThrow(() -> new ResourceNotFoundException("Convite não encontrado."));
+
+        if (invite.getStatus() == GroupMemberStatus.ACTIVE) {
+            throw new InvalidRequestException("Você já faz parte deste rolê.");
+        }
+        invite.setStatus(GroupMemberStatus.ACTIVE);
+        
+        groupRepository.save(group); 
+    }
+
+
 }

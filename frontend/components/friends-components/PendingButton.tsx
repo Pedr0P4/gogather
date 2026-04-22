@@ -48,9 +48,10 @@ export function PendingButton() {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <PButton variant="beige" Icon={Book} className='h-10 text-md font-semibold'>Pedidos pendentes</PButton>
       </DialogTrigger>
+      
       <DialogContent className='max-h-100'>
         <DialogHeader>
           <DialogTitle>Pedidos de amizade pendentes</DialogTitle>
@@ -59,7 +60,7 @@ export function PendingButton() {
         <div>
           { isLoadingPending ?
             <ResultSkeleton/>
-            : pending ? (
+            : pending && pending.length > 0 ? (
             pending.map(obj => (
               <div key={obj.friendExternalId} className="border border-dashed rounded-sm p-2 flex flex-row justify-between items-center">
                 <div className="flex flex-row items-center gap-2">

@@ -18,4 +18,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     List<Group> findGroupsByUserId(@Param("userId") Long userId);
 
 	Optional<Group> findByExternalId(UUID externalId);
+
+	Optional<Group> findByInviteCode(String inviteCode);
 }
