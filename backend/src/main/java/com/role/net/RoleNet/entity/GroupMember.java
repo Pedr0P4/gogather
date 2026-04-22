@@ -1,6 +1,6 @@
 package com.role.net.RoleNet.entity;
 
-import com.role.net.RoleNet.enums.GroupRole;
+import com.role.net.RoleNet.enums.GroupMemberStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,4 +36,12 @@ public class GroupMember extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GroupRole role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private GroupMemberStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "invited_by_id", nullable = true)
+    private User invitedBy;
 }

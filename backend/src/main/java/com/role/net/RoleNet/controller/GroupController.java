@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,5 +61,33 @@ public class GroupController {
         GroupDetailsResponse response = groupService.getGroupDetails(externalId, userData.userId());
         
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/join/{inviteCode}")
+    public ResponseEntity<Void> joinGroup(
+            @PathVariable String inviteCode,
+            @AuthenticationPrincipal User loggedInUser
+    ) {
+        groupService.joinGroupByInviteCode(inviteCode, loggedInUser);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{groupId}/invite/{friendId}")
+    public ResponseEntity<Void> inviteFriend(
+            @PathVariable UUID groupId,
+            @PathVariable UUID friendId,
+            @AuthenticationPrincipal User loggedInUser
+    ) {
+        groupService.inviteFriendToGroup(groupId, friendId, loggedInUser);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{groupId}/accept")
+    public ResponseEntity<Void> acceptInvite(
+            @PathVariable UUID groupId,
+            @AuthenticationPrincipal User loggedInUser
+    ) {
+        groupService.acceptGroupInvite(groupId, loggedInUser);
+        return ResponseEntity.ok().build();
     }
 }
