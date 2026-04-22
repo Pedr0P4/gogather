@@ -6,13 +6,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.role.net.RoleNet.dto.Group.CreateGroupRequest;
-import com.role.net.RoleNet.dto.Group.GroupDetailsResponse;
-import com.role.net.RoleNet.dto.Group.GroupResponse;
+import com.role.net.RoleNet.dto.group.CreateGroupRequest;
+import com.role.net.RoleNet.dto.group.GroupDetailsResponse;
+import com.role.net.RoleNet.dto.group.GroupResponse;
 import com.role.net.RoleNet.entity.EventStop;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.GroupMember;
-import com.role.net.RoleNet.entity.GroupRole;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.enums.GroupMemberStatus;
 import com.role.net.RoleNet.exception.InvalidRequestException;

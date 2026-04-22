@@ -11,8 +11,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.role.net.RoleNet.dto.Friendship.FriendshipResponse;
-import com.role.net.RoleNet.dto.Friendship.FriendshipSimpleResponse;
+import com.role.net.RoleNet.dto.friendship.FriendshipResponse;
+import com.role.net.RoleNet.dto.friendship.FriendshipSimpleResponse;
 import com.role.net.RoleNet.entity.Friendship;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.enums.FriendshipStatus;
