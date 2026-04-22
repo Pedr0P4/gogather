@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.role.net.RoleNet.dto.Auth.RegisterUserRequest;
+import com.role.net.RoleNet.dto.auth.RegisterUserRequest;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.exception.UniqueDataAlreadyInUseException;
 import com.role.net.RoleNet.repository.UserRepository;

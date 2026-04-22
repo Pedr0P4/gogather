@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.role.net.RoleNet.dto.Error.StandardErrorDTO;
+import com.role.net.RoleNet.dto.error.StandardErrorDTO;
 import com.role.net.RoleNet.exception.InvalidDataException;
 import com.role.net.RoleNet.exception.InvalidRequestException;
 
