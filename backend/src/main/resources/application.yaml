@@ -18,4 +18,10 @@ spring:
   api:
     security:
       token:
-        secret: ${token.secret}
+        secret: ${token.secret} 
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
