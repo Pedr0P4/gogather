@@ -1,12 +1,5 @@
 package com.role.net.RoleNet.entity;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +7,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,24 +34,45 @@ public class Group extends BaseEntity {
     @Column(length = 500)
     private String description;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-	@Builder.Default
+    @OneToMany(
+        mappedBy = "group",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    @Builder.Default
     private Set<GroupMember> members = new HashSet<>();
 
-    @Column(name = "invite_code", unique = true, updatable = false, nullable = false)
+    @Column(
+        name = "invite_code",
+        unique = true,
+        updatable = false,
+        nullable = false
+    )
     private String inviteCode;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "group",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     @OrderBy("stopOrder ASC")
-	@Builder.Default
+    @Builder.Default
     private List<EventStop> eventStops = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-	@Builder.Default
+    @OneToMany(
+        mappedBy = "group",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    @Builder.Default
     private List<GroupImage> images = new ArrayList<>();
 
-	@Column(name = "event_date", nullable = false)
-	private Instant eventDate;
+    @OneToMany(mappedBy = "group")
+    @Builder.Default
+    private Set<Expense> expenses = new HashSet<>();
+
+    @Column(name = "event_date", nullable = false)
+    private Instant eventDate;
 
     @PrePersist
     public void generateInviteCode() {
