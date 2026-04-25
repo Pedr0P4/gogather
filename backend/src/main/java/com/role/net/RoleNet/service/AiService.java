@@ -88,6 +88,6 @@ public class AiService {
         ChatMessage savedAiMessage = chatMessageRepository.save(aiMessage);
         ChatMessageResponse responsePayload = ChatMessageResponse.from(savedAiMessage);
         
-        messagingTemplate.convertAndSend("/topic/group/" + groupId, responsePayload);
+        messagingTemplate.convertAndSend("/topic/group/" + group.getExternalId(), responsePayload);
     }
 }
