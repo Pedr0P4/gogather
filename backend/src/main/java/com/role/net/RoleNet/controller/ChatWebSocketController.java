@@ -31,8 +31,9 @@ public class ChatWebSocketController {
     public ChatMessageResponse sendMessage(
             @DestinationVariable Long groupId,
             @Payload @Valid ChatMessageRequest request,
-            @AuthenticationPrincipal User user
+            Principal principal
     ) {
+        User user = (User) ((org.springframework.security.authentication.UsernamePasswordAuthenticationToken) principal).getPrincipal();
         Long userId = user.getId();
         ChatMessage savedMessage = chatService.saveMessage(groupId, userId, request);
 
@@ -44,8 +45,9 @@ public class ChatWebSocketController {
     public TypingEvent handleTyping(
             @DestinationVariable Long groupId,
             @Payload TypingEvent request,
-            @AuthenticationPrincipal User user
+            Principal principal
     ) {
+        User user = (User) ((org.springframework.security.authentication.UsernamePasswordAuthenticationToken) principal).getPrincipal();
         return new TypingEvent(user.getUsername(), request.isTyping());
     }
 }
