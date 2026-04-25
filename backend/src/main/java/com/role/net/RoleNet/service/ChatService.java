@@ -3,8 +3,10 @@ package com.role.net.RoleNet.service;
 import com.role.net.RoleNet.entity.ChatMessage;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.enums.GroupMemberStatus;
 import com.role.net.RoleNet.enums.MessageType;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
+import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.dto.chat.AiMentionEvent;
 import com.role.net.RoleNet.dto.chat.ChatMessageRequest;
 import com.role.net.RoleNet.dto.chat.ChatMessageResponse;
@@ -46,6 +48,10 @@ public class ChatService {
         User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
+        if (!groupRepository.isGroupMember(groupId, userId, GroupMemberStatus.ACTIVE)) {
+            throw new UserNotAGroupMemberException("Você não é membro ativo deste grupo");
+        }
+
 		ChatMessage message = ChatMessage.builder()
 				.group(group)
 				.sender(sender)
@@ -65,12 +71,17 @@ public class ChatService {
     }
 
 	@Transactional(readOnly = true)
-	public Page<ChatMessageResponse> getMessagesByGroup(Long groupId, Pageable pageable) {
+	public Page<ChatMessageResponse> getMessagesByGroup(Long groupId, Long userId, Pageable pageable) {
 		if (!groupRepository.existsById(groupId)) {
-			throw new ResourceNotFoundException("Grupo não encontrado");
+			throw new ResourceNotFoundException("Group not found.");
 		}
 
+		if (!groupRepository.isGroupMember(groupId, userId, GroupMemberStatus.ACTIVE)) {
+			throw new UserNotAGroupMemberException("You are not a member of this group.");
+		}
+
+		
 		return chatMessageRepository.findByGroupIdOrderByCreatedAtDesc(groupId, pageable)
 				.map(ChatMessageResponse::from);
 	}
-}
+}	
