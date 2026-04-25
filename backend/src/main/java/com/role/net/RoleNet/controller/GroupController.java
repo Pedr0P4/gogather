@@ -2,7 +2,6 @@ package com.role.net.RoleNet.controller;
 
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.GroupService;
-import com.role.net.RoleNet.config.JWTUserData;
 import com.role.net.RoleNet.dto.group.CreateGroupRequest;
 import com.role.net.RoleNet.dto.group.GroupDetailsResponse;
 import com.role.net.RoleNet.dto.group.GroupResponse;
@@ -14,7 +13,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,19 +44,17 @@ public class GroupController {
     }
 
 	@GetMapping
-    public ResponseEntity<List<GroupResponse>> getUserGroups(Authentication authentication) {
-        JWTUserData userData = (JWTUserData) authentication.getPrincipal();
-        List<GroupResponse> response = groupService.getUserGroups(userData.userId());
+    public ResponseEntity<List<GroupResponse>> getUserGroups(@AuthenticationPrincipal User user) {
+        List<GroupResponse> response = groupService.getUserGroups(user.getId());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{externalId}")
     public ResponseEntity<GroupDetailsResponse> getGroupDetails(
             @PathVariable UUID externalId,
-            Authentication authentication) {
+            @AuthenticationPrincipal User user) {
         
-        JWTUserData userData = (JWTUserData) authentication.getPrincipal();
-        GroupDetailsResponse response = groupService.getGroupDetails(externalId, userData.userId());
+        GroupDetailsResponse response = groupService.getGroupDetails(externalId, user.getId());
         
         return ResponseEntity.ok(response);
     }

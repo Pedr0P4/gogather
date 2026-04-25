@@ -91,14 +91,18 @@ public class GroupService {
 			.toList();
     }
 
+	@Transactional(readOnly = true)
 	public GroupDetailsResponse getGroupDetails(UUID externalId, Long userId) {
         Group group = groupRepository.findByExternalId(externalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-        boolean isMember = group.getMembers().stream()
-                .anyMatch(member -> member.getUser().getId().equals(userId));
-
-        if (!isMember) throw new UserNotAGroupMemberException("User is not a member of this group");
+		System.out.println("DEBUG: Checking if user " + userId + " is member of group " + externalId.toString());
+        boolean isMember = groupRepository.isGroupMemberByExternalId(externalId, userId, GroupMemberStatus.ACTIVE);
+		System.out.println("DEBUG: User " + userId + " is member of group " + externalId.toString() + ": " + isMember);
+		
+        if (!isMember) {
+            throw new UserNotAGroupMemberException("User is not a member of this group");	
+        }
 
         List<GroupDetailsResponse.MemberDTO> members = group.getMembers().stream()
 			.map(member -> new GroupDetailsResponse.MemberDTO(
@@ -116,6 +120,7 @@ public class GroupService {
 			group.getDescription(),
 			group.getInviteCode(),
 			group.getCreatedAt(),
+			group.getEventDate(),
 			members
         );
     }

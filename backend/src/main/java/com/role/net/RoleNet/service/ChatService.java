@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class ChatService {
 
@@ -43,13 +45,13 @@ public class ChatService {
     public ChatMessage saveMessage(Long groupId, Long userId, ChatMessageRequest request) {
         
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found."));
                 
         User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         if (!groupRepository.isGroupMember(groupId, userId, GroupMemberStatus.ACTIVE)) {
-            throw new UserNotAGroupMemberException("Você não é membro ativo deste grupo");
+            throw new UserNotAGroupMemberException("You are not a member of this group.");
         }
 
 		ChatMessage message = ChatMessage.builder()
@@ -71,17 +73,16 @@ public class ChatService {
     }
 
 	@Transactional(readOnly = true)
-	public Page<ChatMessageResponse> getMessagesByGroup(Long groupId, Long userId, Pageable pageable) {
-		if (!groupRepository.existsById(groupId)) {
+	public Page<ChatMessageResponse> getMessagesByGroup(UUID externalId, Long userId, Pageable pageable) {
+		if (!groupRepository.findByExternalId(externalId).isPresent()) {
 			throw new ResourceNotFoundException("Group not found.");
 		}
 
-		if (!groupRepository.isGroupMember(groupId, userId, GroupMemberStatus.ACTIVE)) {
+		if (!groupRepository.isGroupMemberByExternalId(externalId, userId, GroupMemberStatus.ACTIVE)) {
 			throw new UserNotAGroupMemberException("You are not a member of this group.");
 		}
 
-		
-		return chatMessageRepository.findByGroupIdOrderByCreatedAtDesc(groupId, pageable)
+		return chatMessageRepository.findByGroupExternalIdOrderByCreatedAtDesc(externalId, pageable)
 				.map(ChatMessageResponse::from);
 	}
-}	
+}

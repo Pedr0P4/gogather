@@ -10,6 +10,24 @@ export interface TypingEvent {
   isTyping: boolean;
 }
 
+export interface GroupDetails {
+  externalId: string;
+  name: string;
+  description: string;
+  inviteCode: string;
+  createdAt: string;
+  eventDate: string;
+  members: GroupMemberDTO[];
+}
+
+export interface GroupMemberDTO {
+  externalId: string;
+  username: string;
+  displayName: string;
+  role: string;
+  email: string;
+}
+
 export interface PaginatedChatHistory {
   content: ChatMessage[];
   pageable: any;

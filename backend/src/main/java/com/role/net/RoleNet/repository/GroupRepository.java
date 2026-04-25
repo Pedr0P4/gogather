@@ -24,4 +24,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
 	@Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM GroupMember m WHERE m.group.id = :groupId AND m.user.id = :userId AND m.status = :status) THEN true ELSE false END")
 	boolean isGroupMember(@Param("groupId") Long groupId, @Param("userId") Long userId, @Param("status") GroupMemberStatus status);
+
+	@Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM GroupMember m WHERE m.group.externalId = :externalId AND m.user.id = :userId AND m.status = :status) THEN true ELSE false END")
+	boolean isGroupMemberByExternalId(@Param("externalId") UUID externalId, @Param("userId") Long userId, @Param("status") GroupMemberStatus status);
 }

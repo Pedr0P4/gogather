@@ -12,6 +12,7 @@ public record GroupDetailsResponse(
     String description,
     String inviteCode,
     Instant createdAt,
+    Instant eventDate,
     List<MemberDTO> members
 ) {
     public record MemberDTO(

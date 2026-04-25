@@ -3,6 +3,9 @@ package com.role.net.RoleNet.controller;
 import com.role.net.RoleNet.dto.chat.ChatMessageResponse;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.ChatService;
+
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,17 +24,17 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @GetMapping("/{groupId}/messages")
+    @GetMapping("/{externalId}/messages")
     public ResponseEntity<Page<ChatMessageResponse>> getChatHistory(
-            @PathVariable Long groupId,
+            @PathVariable UUID externalId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @AuthenticationPrincipal User user
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         
-        Page<ChatMessageResponse> history = chatService.getMessagesByGroup(groupId, user.getId(), pageable);
+        Page<ChatMessageResponse> history = chatService.getMessagesByGroup(externalId, user.getId(), pageable);
         
         return ResponseEntity.ok(history);
     }
-}
+}

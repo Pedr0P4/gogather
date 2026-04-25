@@ -4,7 +4,7 @@ import SockJS from "sockjs-client";
 import { ChatMessage, TypingEvent } from "@/types/chat";
 import { useAuth } from "@/context/AuthContext";
 
-export const useChatWebSocket = (groupId: number) => {
+export const useChatWebSocket = (externalId: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const clientRef = useRef<Client | null>(null);
@@ -27,16 +27,15 @@ export const useChatWebSocket = (groupId: number) => {
         setIsConnected(true);
         
         // Subscribe to messages
-        client.subscribe(`/topic/group/${groupId}`, (message: IMessage) => {
+        client.subscribe(`/topic/group/${externalId}`, (message: IMessage) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
           setMessages((prev) => [...prev, chatMessage]);
         });
 
         // Subscribe to typing events
-        client.subscribe(`/topic/group/${groupId}/typing`, (message: IMessage) => {
+        client.subscribe(`/topic/group/${externalId}/typing`, (message: IMessage) => {
           const typingEvent: TypingEvent = JSON.parse(message.body);
           
-          // Ignore our own typing events
           if (typingEvent.senderName === user?.displayName || typingEvent.senderName === user?.username) return;
 
           setTypingUsers((prev) => {
@@ -66,32 +65,32 @@ export const useChatWebSocket = (groupId: number) => {
       client.deactivate();
       clientRef.current = null;
     };
-  }, [groupId, user?.displayName, user?.username]);
+  }, [externalId, user?.displayName, user?.username]);
 
   const sendMessage = useCallback(
     (content: string) => {
       if (clientRef.current && clientRef.current.connected && user) {
         clientRef.current.publish({
-          destination: `/app/chat/${groupId}/send`,
+          destination: `/app/chat/${externalId}/send`,
           body: JSON.stringify({ content, requiresAiResponse: false }),
         });
       } else {
         console.warn("Cannot send message: WebSocket not connected or user not logged in.");
       }
     },
-    [groupId, user]
+    [externalId, user]
   );
 
   const sendTypingEvent = useCallback(
     (isTyping: boolean) => {
       if (clientRef.current && clientRef.current.connected && user) {
         clientRef.current.publish({
-          destination: `/app/chat/${groupId}/typing`,
+          destination: `/app/chat/${externalId}/typing`,
           body: JSON.stringify({ senderName: user.displayName || user.username, isTyping }),
         });
       }
     },
-    [groupId, user]
+    [externalId, user]
   );
 
   return {
