@@ -18,7 +18,6 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers 
 
   const typingArray = Array.from(typingUsers);
 
-  // The DTO has no id, so we use index as key (messages are append-only)
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/20">
       {messages.length === 0 ? (

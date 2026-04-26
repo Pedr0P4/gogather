@@ -1,6 +1,7 @@
 import React from "react";
 import { ChatMessage } from "@/types/chat";
 import { cn } from "@/lib/utils";
+import { Sparkles } from "lucide-react";
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -18,30 +19,30 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isCurrent
   return (
     <div
       className={cn(
-        "flex w-full mb-4",
-        isAi ? "justify-center" : isCurrentUser ? "justify-end" : "justify-start"
+        "flex w-full mb-4 group",
+        isCurrentUser ? "justify-end" : "justify-start"
       )}
     >
       <div
         className={cn(
-          "max-w-[75%] rounded-lg px-4 py-2 flex flex-col gap-1 shadow-sm",
+          "max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 flex flex-col gap-1 shadow-sm transition-all relative overflow-hidden",
           isAi
-            ? "bg-accent text-accent-foreground rounded-lg border border-border italic"
+            ? "bg-white text-gray-800 rounded-bl-none border border-[#cc241a]/30 shadow-[0_4px_15px_-3px_rgba(204,36,26,0.1)]"
             : isCurrentUser
-              ? "bg-primary text-primary-foreground rounded-br-none"
-              : "bg-muted text-foreground rounded-bl-none border border-border"
+              ? "bg-[#458588] text-white rounded-br-none border-none"
+              : "bg-white text-gray-800 rounded-bl-none border border-gray-100"
         )}
       >
         {!isCurrentUser && (
-          <span className="text-xs font-semibold text-muted-foreground">
-            {message.senderName}
+          <span className={cn("text-xs font-bold flex items-center gap-1", isAi ? "text-[#cc241a]" : "text-[#458588]")}>
+            {message.senderName} {isAi && <Sparkles className="w-3 h-3 text-[#cc241a]" />}
           </span>
         )}
-        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
         <span
           className={cn(
-            "text-[10px] self-end opacity-70",
-            isCurrentUser ? "text-primary-foreground" : "text-muted-foreground"
+            "text-[10px] self-end mt-1 font-medium",
+            isCurrentUser ? "text-white/70" : "text-gray-400"
           )}
         >
           {time}

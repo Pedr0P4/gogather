@@ -7,6 +7,7 @@ import { ChatInput } from "./ChatInput";
 import { PaginatedChatHistory, GroupDetails } from "@/types/chat";
 import { Loader2, Users } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 
 interface ChatContainerProps {
   externalId: string;
@@ -20,15 +21,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
 
   const fetchGroupDetails = useCallback(async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const response = await fetch(`${apiUrl}/groups/${externalId}`, {
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        const data: GroupDetails = await response.json();
-        setGroupDetails(data);
-      }
+      const response = await api.get<GroupDetails>(`/groups/${externalId}`);
+      setGroupDetails(response.data);
     } catch (error) {
       console.error("Erro ao buscar detalhes do grupo:", error);
     }
@@ -37,21 +31,16 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
   const fetchHistory = useCallback(async () => {
     try {
       setIsLoadingHistory(true);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const response = await fetch(`${apiUrl}/groups/${externalId}/messages?page=0&size=50`, {
-        credentials: "include",
+      const response = await api.get<PaginatedChatHistory>(`/groups/${externalId}/messages?page=0&size=50`);
+      
+      const data = response.data;
+      const reversedMessages = [...data.content].reverse();
+      
+      setMessages((prev) => {
+        const existingKeys = new Set(prev.map(m => `${m.createdAt}-${m.senderName}`));
+        const newHistory = reversedMessages.filter(m => !existingKeys.has(`${m.createdAt}-${m.senderName}`));
+        return [...newHistory, ...prev];
       });
-
-      if (response.ok) {
-        const data: PaginatedChatHistory = await response.json();
-        const reversedMessages = [...data.content].reverse();
-        
-        setMessages((prev) => {
-          const existingKeys = new Set(prev.map(m => `${m.createdAt}-${m.senderName}`));
-          const newHistory = reversedMessages.filter(m => !existingKeys.has(`${m.createdAt}-${m.senderName}`));
-          return [...newHistory, ...prev];
-        });
-      }
     } catch (error) {
       console.error("Erro ao buscar histórico de mensagens:", error);
     } finally {
@@ -76,7 +65,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
   };
 
   return (
-    <div className="flex flex-col h-[80vh] w-full max-w-4xl mx-auto border rounded-xl shadow-sm overflow-hidden bg-background">
+    <div className="flex flex-col h-full w-full border rounded-xl shadow-sm overflow-hidden bg-background">
       {/* Header */}
       <div className="p-4 border-b bg-card flex items-center justify-between">
         <div className="flex flex-col gap-0.5">

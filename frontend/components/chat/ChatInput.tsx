@@ -21,7 +21,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     if (content.trim() && !disabled) {
       onSendMessage(content.trim());
       setContent("");
-      onTypingEvent(false); // Parar de digitar ao enviar
+      onTypingEvent(false);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     }
   };
@@ -38,19 +38,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     
     if (disabled) return;
 
-    // Lógica de debounce para "digitando"
     onTypingEvent(true);
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
     
-    // Parar de exibir "digitando" após 2 segundos sem novas teclas
     typingTimeoutRef.current = setTimeout(() => {
       onTypingEvent(false);
     }, 2000);
   };
 
-  // Limpar timeout no desmonte
   useEffect(() => {
     return () => {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);

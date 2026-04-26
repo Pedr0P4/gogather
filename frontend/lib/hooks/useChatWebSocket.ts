@@ -26,13 +26,11 @@ export const useChatWebSocket = (externalId: string) => {
       onConnect: () => {
         setIsConnected(true);
         
-        // Subscribe to messages
         client.subscribe(`/topic/group/${externalId}`, (message: IMessage) => {
           const chatMessage: ChatMessage = JSON.parse(message.body);
           setMessages((prev) => [...prev, chatMessage]);
         });
 
-        // Subscribe to typing events
         client.subscribe(`/topic/group/${externalId}/typing`, (message: IMessage) => {
           const typingEvent: TypingEvent = JSON.parse(message.body);
           
@@ -70,9 +68,10 @@ export const useChatWebSocket = (externalId: string) => {
   const sendMessage = useCallback(
     (content: string) => {
       if (clientRef.current && clientRef.current.connected && user) {
+        const requiresAiResponse = content.includes("@IA");
         clientRef.current.publish({
           destination: `/app/chat/${externalId}/send`,
-          body: JSON.stringify({ content, requiresAiResponse: false }),
+          body: JSON.stringify({ content, requiresAiResponse }),
         });
       } else {
         console.warn("Cannot send message: WebSocket not connected or user not logged in.");
