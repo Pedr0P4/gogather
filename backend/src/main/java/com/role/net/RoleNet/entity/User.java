@@ -71,8 +71,11 @@ public class User extends BaseEntity implements UserDetails {
     )
     private Set<Friendship> friendRequestsReceived = new HashSet<>();
 
-    @OneToMany(mappedBy = "whoPayed")
-    private Set<Expense> payedExpenses = new HashSet<>();
+    @OneToMany(mappedBy = "payer")
+    private Set<ExpenseContribution> expenseContributions = new HashSet<>();
+
+    @OneToMany(mappedBy = "debtor")
+    private Set<ExpenseDistribution> expenseDistributions = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

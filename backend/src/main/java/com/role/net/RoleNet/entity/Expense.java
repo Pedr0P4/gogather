@@ -1,9 +1,14 @@
 package com.role.net.RoleNet.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -30,17 +35,21 @@ public class Expense extends BaseEntity {
     @Column(nullable = true)
     private String description;
 
+    // O valor vai ser salvo em centavos
     @NotNull(message = "Expense total value cannot be null!")
     @Column(nullable = false)
-    private Double totalValue;
-
-    @NotNull(message = "The expense must be payed by someone!")
-    @ManyToOne
-    @JoinColumn(name = "who_payed_id", nullable = false)
-    private User whoPayed;
+    private Long totalValue;
 
     @NotNull(message = "The expense must have a group!")
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = true)
     private Group group;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "parentExpense", cascade = CascadeType.PERSIST)
+    private Set<ExpenseContribution> expenseContributions = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "parentExpense", cascade = CascadeType.PERSIST)
+    private Set<ExpenseDistribution> expenseDistributions = new HashSet<>();
 }
