@@ -112,6 +112,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
         onSendMessage={sendMessage}
         onTypingEvent={sendTypingEvent}
         disabled={!isConnected || isLoadingHistory}
+        members={groupDetails?.members || []}
       />
     </div>
   );

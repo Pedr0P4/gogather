@@ -68,7 +68,7 @@ export const useChatWebSocket = (externalId: string) => {
   const sendMessage = useCallback(
     (content: string) => {
       if (clientRef.current && clientRef.current.connected && user) {
-        const requiresAiResponse = content.includes("@IA");
+        const requiresAiResponse = content.includes("@gogatherai");
         clientRef.current.publish({
           destination: `/app/chat/${externalId}/send`,
           body: JSON.stringify({ content, requiresAiResponse }),
