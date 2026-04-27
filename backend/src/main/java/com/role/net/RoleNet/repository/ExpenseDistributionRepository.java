@@ -11,5 +11,5 @@ import com.role.net.RoleNet.enums.SplitStatus;
 public interface ExpenseDistributionRepository extends JpaRepository<ExpenseDistribution, Long> {
     Optional<ExpenseDistribution> findByExternalId(UUID externalId);
 
-    boolean existsByExpenseIdAndStatus(Long id, SplitStatus status);
+    boolean existsByParentExpense_IdAndStatus(Long id, SplitStatus status);
 }

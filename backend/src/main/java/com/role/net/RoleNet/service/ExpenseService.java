@@ -85,7 +85,7 @@ public class ExpenseService {
 
         buildLists(receivers, payers, group, request, individualQuota, remainingCents);
         putDistributionsAuto(receivers, payers, expense);
-        putContributionsAuto(expense, group.getMembers(), request.contributions(), members);
+        putContributionsAuto(expense, group.getMembers(), request.contributions());
 
         return expenseRepository.save(expense);
     }
@@ -168,8 +168,8 @@ public class ExpenseService {
 
         expenseDistribution.setStatus(SplitStatus.SETTLED);
 
-        if(!expenseDistributionRepository.existsByExpenseIdAndStatus(expenseDistribution.getParentExpense().getId(), SplitStatus.PENDING)
-            && !expenseDistributionRepository.existsByExpenseIdAndStatus(expenseDistribution.getParentExpense().getId(), SplitStatus.AWAITING_CONFIRMATION)
+        if(!expenseDistributionRepository.existsByParentExpense_IdAndStatus(expenseDistribution.getParentExpense().getId(), SplitStatus.PENDING)
+            && !expenseDistributionRepository.existsByParentExpense_IdAndStatus(expenseDistribution.getParentExpense().getId(), SplitStatus.AWAITING_CONFIRMATION)
         ) {
             expenseDistribution.getParentExpense().setStatus(ExpenseStatus.FINISHED);
         }
@@ -334,7 +334,7 @@ public class ExpenseService {
     private void putContributionsAuto(
         Expense expense,
         Set<GroupMember> groupMembers,
-        List<ExpenseContributionRequest> contributionRequests,
+        List<ExpenseContributionRequest> contributionRequests
     ) {
 
         Map<UUID, GroupMember> membersInMemory = groupMembers.stream()
