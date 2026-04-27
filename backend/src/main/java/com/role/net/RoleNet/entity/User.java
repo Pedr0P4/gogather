@@ -3,7 +3,9 @@ package com.role.net.RoleNet.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -47,8 +49,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "birthdate", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "pix_key", nullable = true)
-    private String pixKey;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pix_info_id", referencedColumnName = "id")
+    private PixInfo pixInfo;
 
     @OneToMany(
         mappedBy = "user",
@@ -70,12 +73,6 @@ public class User extends BaseEntity implements UserDetails {
         orphanRemoval = true
     )
     private Set<Friendship> friendRequestsReceived = new HashSet<>();
-
-    @OneToMany(mappedBy = "payer")
-    private Set<ExpenseContribution> expenseContributions = new HashSet<>();
-
-    @OneToMany(mappedBy = "debtor")
-    private Set<ExpenseDistribution> expenseDistributions = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,15 +1,14 @@
 package com.role.net.RoleNet.service;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.role.net.RoleNet.dto.expense.ExpenseAutoCreationRequest;
 import com.role.net.RoleNet.dto.expense.ExpenseContributionRequest;
@@ -21,42 +20,58 @@ import com.role.net.RoleNet.entity.ExpenseDistribution;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.GroupMember;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.enums.ExpenseStatus;
+import com.role.net.RoleNet.enums.GroupRole;
 import com.role.net.RoleNet.enums.SplitStatus;
 import com.role.net.RoleNet.exception.InvalidDataException;
+import com.role.net.RoleNet.exception.InvalidRequestException;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
+import com.role.net.RoleNet.exception.UnauthorizedRequestException;
+import com.role.net.RoleNet.repository.ExpenseContributionRepository;
+import com.role.net.RoleNet.repository.ExpenseDistributionRepository;
 import com.role.net.RoleNet.repository.ExpenseRepository;
-import com.role.net.RoleNet.repository.GroupMemberRepository;
 import com.role.net.RoleNet.repository.GroupRepository;
-import com.role.net.RoleNet.repository.UserRepository;
 
 @Service
 public class ExpenseService {
     private final ExpenseRepository expenseRepository;
+    private final ExpenseContributionRepository expenseContributionRepository;
+    private final ExpenseDistributionRepository expenseDistributionRepository;
     private final GroupRepository groupRepository;
-    private final GroupMemberRepository groupMemberRepository;
 
     public ExpenseService(
         ExpenseRepository expenseRepository,
-        GroupRepository groupRepository,
-        GroupMemberRepository groupMemberRepository
+        ExpenseContributionRepository expenseContributionRepository,
+        ExpenseDistributionRepository expenseDistributionRepository,
+        GroupRepository groupRepository
     ) {
         this.expenseRepository = expenseRepository;
+        this.expenseContributionRepository = expenseContributionRepository;
+        this.expenseDistributionRepository = expenseDistributionRepository;
         this.groupRepository = groupRepository;
-        this.groupMemberRepository = groupMemberRepository;
     }
 
     private record MemberValue(GroupMember member, Long cents) {}
 
     public Expense createAuto(
+        User requester,
         UUID groupExternalId,
         ExpenseAutoCreationRequest request
     ) {
         Group group = groupRepository.findByExternalId(groupExternalId)
             .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado."));
 
+        GroupMember requesterMember = group.getMembers().stream()
+            .filter(m -> m.getUser().equals(requester))
+            .findFirst()
+            .orElseThrow(() -> new UnauthorizedRequestException("Você não faz parte deste grupo."));
+        if (requesterMember.getRole() == GroupRole.MEMBER)
+            throw new UnauthorizedRequestException("Você deve ser administrador para fazer isso.");
+
         Expense expense = new Expense();
         expense.setDescription(request.description());
         expense.setGroup(group);
+        expense.setStatus(ExpenseStatus.PENDING);
 
         int membersAmount = group.getMembers().size();
         Long valueInCents = toCents(request.totalValue());
@@ -70,12 +85,13 @@ public class ExpenseService {
 
         buildLists(receivers, payers, group, request, individualQuota, remainingCents);
         putDistributionsAuto(receivers, payers, expense);
-        putContributionsAuto(expense, group.getMembers(), request.contributions());
+        putContributionsAuto(expense, group.getMembers(), request.contributions(), members);
 
         return expenseRepository.save(expense);
     }
 
     public Expense createManual(
+        User requester,
         UUID groupExternalId,
         ExpenseManualCreationRequest request
     ) {
@@ -92,10 +108,18 @@ public class ExpenseService {
         Group group = groupRepository.findByExternalId(groupExternalId)
             .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado."));
 
+        GroupMember requesterMember = group.getMembers().stream()
+            .filter(m -> m.getUser().equals(requester))
+            .findFirst()
+            .orElseThrow(() -> new UnauthorizedRequestException("Você não faz parte deste grupo."));
+        if (requesterMember.getRole() == GroupRole.MEMBER)
+            throw new UnauthorizedRequestException("Você deve ser administrador para fazer isso.");
+
         Expense expense = new Expense();
         expense.setDescription(request.description());
         expense.setGroup(group);
         expense.setTotalValue(toCents(request.totalValue()));
+        expense.setStatus(ExpenseStatus.PENDING);
 
         Map<UUID, GroupMember> members = group.getMembers().stream()
             .collect(Collectors.toMap(
@@ -109,6 +133,48 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 
+    public Expense findByExternalId(UUID externalId) {
+        return expenseRepository.findByExternalId(externalId)
+            .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
+    }
+
+    public ExpenseDistribution findExpenseDistributionByExternalId(UUID externalId) {
+        return expenseDistributionRepository.findByExternalId(externalId)
+            .orElseThrow(() -> new ResourceNotFoundException("Parte de dívida não encontrada."));
+    }
+
+    @Transactional
+    public void markAsPaid(Long requesterId, UUID externalId) {
+        ExpenseDistribution expenseDistribution = expenseDistributionRepository.findByExternalId(externalId)
+            .orElseThrow(() -> new ResourceNotFoundException("Parte de dívida não encontrada."));
+
+        if(!expenseDistribution.getDebtor().getUser().getId().equals(requesterId))
+            throw new UnauthorizedRequestException("Essa dívida não é sua!");
+        if(!expenseDistribution.getStatus().equals(SplitStatus.PENDING))
+            throw new InvalidRequestException("A dívida não está pendente.");
+
+        expenseDistribution.setStatus(SplitStatus.AWAITING_CONFIRMATION);
+    }
+
+    @Transactional
+    public void confirmReceipt(Long requesterId, UUID externalId) {
+        ExpenseDistribution expenseDistribution = expenseDistributionRepository.findByExternalId(externalId)
+            .orElseThrow(() -> new ResourceNotFoundException("Parte de dívida não encontrada."));
+
+        if(!expenseDistribution.getCreditor().getUser().getId().equals(requesterId))
+            throw new UnauthorizedRequestException("Você não é credor dessa dívida");
+        if(!expenseDistribution.getStatus().equals(SplitStatus.AWAITING_CONFIRMATION))
+            throw new InvalidRequestException("A dívida não aguardando confirmação.");
+
+        expenseDistribution.setStatus(SplitStatus.SETTLED);
+
+        if(!expenseDistributionRepository.existsByExpenseIdAndStatus(expenseDistribution.getParentExpense().getId(), SplitStatus.PENDING)
+            && !expenseDistributionRepository.existsByExpenseIdAndStatus(expenseDistribution.getParentExpense().getId(), SplitStatus.AWAITING_CONFIRMATION)
+        ) {
+            expenseDistribution.getParentExpense().setStatus(ExpenseStatus.FINISHED);
+        }
+    }
+
     private void putContributionsManual(
         Expense expense,
         Map<UUID, GroupMember> members,
@@ -120,6 +186,12 @@ public class ExpenseService {
 
             if(payer == null) {
                 throw new InvalidDataException("Contribuidor não está no grupo.");
+            }
+
+            if(payer.getUser().getPixInfo().getPixKey().isBlank()) {
+                throw new InvalidRequestException(
+                    "O membro " + payer.getUser().getDisplayName() + " não possui chave pix"
+                );
             }
 
             expense.getExpenseContributions().add(
@@ -262,17 +334,24 @@ public class ExpenseService {
     private void putContributionsAuto(
         Expense expense,
         Set<GroupMember> groupMembers,
-        List<ExpenseContributionRequest> contributionRequests
+        List<ExpenseContributionRequest> contributionRequests,
     ) {
+
         Map<UUID, GroupMember> membersInMemory = groupMembers.stream()
             .collect(Collectors.toMap(GroupMember::getExternalId, member -> member));
 
         for (ExpenseContributionRequest request : contributionRequests) {
             GroupMember payer = membersInMemory.get(request.payerExternalId());
 
-            if (payer == null) {
+            if(payer == null) {
                 throw new InvalidDataException(
                     "O membro com ID " + request.payerExternalId() + " não pertence a este grupo."
+                );
+            }
+
+            if(payer.getUser().getPixInfo().getPixKey().isBlank()) {
+                throw new InvalidRequestException(
+                    "O membro " + payer.getUser().getDisplayName() + " não possui chave pix."
                 );
             }
 

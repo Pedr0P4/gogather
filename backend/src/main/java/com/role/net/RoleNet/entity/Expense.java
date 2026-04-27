@@ -3,6 +3,8 @@ package com.role.net.RoleNet.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.role.net.RoleNet.enums.ExpenseStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +41,10 @@ public class Expense extends BaseEntity {
     @NotNull(message = "Expense total value cannot be null!")
     @Column(nullable = false)
     private Long totalValue;
+
+    @NotNull(message = "Expense status cannot be null!")
+    @Column(nullable = false)
+    private ExpenseStatus status;
 
     @NotNull(message = "The expense must have a group!")
     @ManyToOne

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.role.net.RoleNet.dto.error.StandardErrorDTO;
 import com.role.net.RoleNet.exception.InvalidDataException;
 import com.role.net.RoleNet.exception.InvalidRequestException;
+import com.role.net.RoleNet.exception.UnauthorizedRequestException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -42,6 +43,22 @@ public class RequestExceptionHandler {
             Instant.now(),
             status.value(),
             "Dado inválido",
+            e.getMessage(),
+            request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(UnauthorizedRequestException.class)
+    public ResponseEntity<StandardErrorDTO> unauthorizedRequest(
+        InvalidRequestException e,
+        HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        StandardErrorDTO err = new StandardErrorDTO(
+            Instant.now(),
+            status.value(),
+            "Requisição não autorizada",
             e.getMessage(),
             request.getRequestURI());
 

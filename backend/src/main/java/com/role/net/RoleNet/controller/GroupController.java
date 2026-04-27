@@ -103,10 +103,11 @@ public class GroupController {
 
     @PostMapping("/{groupId}/expense/auto")
     public ResponseEntity<ExpenseResponse> createExpenseAuto(
+        @AuthenticationPrincipal User user,
         @PathVariable UUID groupExternalId,
         @RequestBody ExpenseAutoCreationRequest request
     ) {
-        Expense expense = expenseService.createAuto(groupExternalId, request);
+        Expense expense = expenseService.createAuto(user, groupExternalId, request);
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(ExpenseResponse.from(expense));
@@ -114,10 +115,11 @@ public class GroupController {
 
     @PostMapping("/{groupId}/expense/manual")
     public ResponseEntity<ExpenseResponse> createExpenseManual(
+        @AuthenticationPrincipal User user,
         @PathVariable UUID groupExternalId,
         @RequestBody ExpenseManualCreationRequest request
     ) {
-        Expense expense = expenseService.createManual(groupExternalId, request);
+        Expense expense = expenseService.createManual(user, groupExternalId, request);
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(ExpenseResponse.from(expense));

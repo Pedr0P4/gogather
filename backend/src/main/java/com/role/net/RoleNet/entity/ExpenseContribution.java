@@ -39,5 +39,5 @@ public class ExpenseContribution extends BaseEntity {
     @NotNull(message = "Payed expense split must have an user.")
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User payer;
+    private GroupMember payer;
 }
