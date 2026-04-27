@@ -9,12 +9,6 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-/**
- * Channel interceptor that, on STOMP CONNECT, reads the authentication
- * saved during the HTTP handshake and sets it as the STOMP session's
- * user Principal. This makes {@code Principal} available in
- * {@code @MessageMapping} handler methods.
- */
 @Component
 public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
 
