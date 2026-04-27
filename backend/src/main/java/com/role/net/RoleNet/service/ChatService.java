@@ -39,10 +39,10 @@ public class ChatService {
 
     @Transactional
     public ChatMessage saveMessage(Long groupId, Long userId, ChatMessageRequest request) {
-        
+
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado"));
-                
+
         User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 

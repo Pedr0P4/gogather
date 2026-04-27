@@ -8,14 +8,15 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-@Getter
-@EqualsAndHashCode(of = "id")
+@Getter @Setter
 @MappedSuperclass
 public class BaseEntity {
 
@@ -47,5 +48,17 @@ public class BaseEntity {
         if (this.externalId == null) {
             this.externalId = UUID.randomUUID();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseEntity other)) return false;
+        return getExternalId() != null && getExternalId().equals(other.getExternalId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getExternalId());
     }
 }

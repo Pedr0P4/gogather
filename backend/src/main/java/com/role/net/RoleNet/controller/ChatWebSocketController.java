@@ -8,8 +8,6 @@ import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.service.ChatService;
 import jakarta.validation.Valid;
 
-import java.security.Principal;
-
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;

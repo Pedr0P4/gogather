@@ -3,7 +3,9 @@ package com.role.net.RoleNet.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +22,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @Entity
-@SequenceGenerator(name = "id_generator", sequenceName = "seq_user", allocationSize = 1)
+@SequenceGenerator(
+    name = "id_generator",
+    sequenceName = "seq_user",
+    allocationSize = 1
+)
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
@@ -44,13 +49,29 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "birthdate", nullable = false)
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pix_info_id", referencedColumnName = "id")
+    private PixInfo pixInfo;
+
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     private Set<GroupMember> groupMemberships = new HashSet<>();
 
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "requester",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     private Set<Friendship> friendRequestsSent = new HashSet<>();
 
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "receiver",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     private Set<Friendship> friendRequestsReceived = new HashSet<>();
 
     @Override
