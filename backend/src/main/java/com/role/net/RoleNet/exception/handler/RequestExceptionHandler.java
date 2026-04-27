@@ -51,7 +51,7 @@ public class RequestExceptionHandler {
 
     @ExceptionHandler(UnauthorizedRequestException.class)
     public ResponseEntity<StandardErrorDTO> unauthorizedRequest(
-        InvalidRequestException e,
+        UnauthorizedRequestException e,
         HttpServletRequest request
     ) {
         HttpStatus status = HttpStatus.FORBIDDEN;

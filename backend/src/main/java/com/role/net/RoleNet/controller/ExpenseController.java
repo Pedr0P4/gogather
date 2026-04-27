@@ -36,9 +36,9 @@ public class ExpenseController {
     @GetMapping("/split/{splitId}/pix-code")
     public ResponseEntity<ExpenseDistributionPixResponse> generatePixCode(
         @AuthenticationPrincipal User user,
-        @PathVariable UUID splitExternalId
+        @PathVariable UUID splitId
     ) {
-        ExpenseDistribution expenseDistribution = expenseService.findExpenseDistributionByExternalId(splitExternalId);
+        ExpenseDistribution expenseDistribution = expenseService.findExpenseDistributionByExternalId(splitId);
 
         if(!expenseDistribution.getDebtor().getUser().getId().equals(user.getId()))
             throw new UnauthorizedRequestException("Essa dívida não é sua!");

@@ -58,6 +58,11 @@ public class ExpenseService {
         UUID groupExternalId,
         ExpenseAutoCreationRequest request
     ) {
+        Long totalContributions = request.contributions().stream()
+                .mapToLong(c -> toCents(c.value())).sum();
+        if(!totalContributions.equals(toCents(request.totalValue())))
+            throw new InvalidDataException("A soma das contribuições não bate com o valor total da despesa");
+
         Group group = groupRepository.findByExternalId(groupExternalId)
             .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado."));
 
@@ -97,12 +102,12 @@ public class ExpenseService {
     ) {
         Long totalContributions = request.contributions().stream()
                 .mapToLong(c -> toCents(c.value())).sum();
-        if(totalContributions != toCents(request.totalValue()))
+        if(!totalContributions.equals(toCents(request.totalValue())))
             throw new InvalidDataException("A soma das contribuições não bate com o valor total da despesa");
 
         Long totalDistributions = request.distributions().stream()
                 .mapToLong(d -> toCents(d.value())).sum();
-        if(totalDistributions != toCents(request.totalValue()))
+        if(!totalDistributions.equals(toCents(request.totalValue())))
             throw new InvalidDataException("A soma das distribuições não bate com o valor total da despesa");
 
         Group group = groupRepository.findByExternalId(groupExternalId)
@@ -188,9 +193,9 @@ public class ExpenseService {
                 throw new InvalidDataException("Contribuidor não está no grupo.");
             }
 
-            if(payer.getUser().getPixInfo().getPixKey().isBlank()) {
+            if(payer.getUser().getPixInfo() == null) {
                 throw new InvalidRequestException(
-                    "O membro " + payer.getUser().getDisplayName() + " não possui chave pix"
+                    "O membro " + payer.getUser().getDisplayName() + " não possui chave pix cadastrada."
                 );
             }
 
@@ -349,9 +354,9 @@ public class ExpenseService {
                 );
             }
 
-            if(payer.getUser().getPixInfo().getPixKey().isBlank()) {
+            if(payer.getUser().getPixInfo() == null) {
                 throw new InvalidRequestException(
-                    "O membro " + payer.getUser().getDisplayName() + " não possui chave pix."
+                    "O membro " + payer.getUser().getDisplayName() + " não possui chave pix cadastrada."
                 );
             }
 

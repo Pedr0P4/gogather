@@ -56,19 +56,17 @@ public class GroupController {
     }
 
 	@GetMapping
-    public ResponseEntity<List<GroupResponse>> getUserGroups(Authentication authentication) {
-        JWTUserData userData = (JWTUserData) authentication.getPrincipal();
-        List<GroupResponse> response = groupService.getUserGroups(userData.userId());
+    public ResponseEntity<List<GroupResponse>> getUserGroups(@AuthenticationPrincipal User user) {
+        List<GroupResponse> response = groupService.getUserGroups(user.getId());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{externalId}")
     public ResponseEntity<GroupDetailsResponse> getGroupDetails(
             @PathVariable UUID externalId,
-            Authentication authentication) {
-
-        JWTUserData userData = (JWTUserData) authentication.getPrincipal();
-        GroupDetailsResponse response = groupService.getGroupDetails(externalId, userData.userId());
+            @AuthenticationPrincipal User user
+    ) {
+        GroupDetailsResponse response = groupService.getGroupDetails(externalId, user.getId());
 
         return ResponseEntity.ok(response);
     }
@@ -104,10 +102,10 @@ public class GroupController {
     @PostMapping("/{groupId}/expense/auto")
     public ResponseEntity<ExpenseResponse> createExpenseAuto(
         @AuthenticationPrincipal User user,
-        @PathVariable UUID groupExternalId,
+        @PathVariable UUID groupId,
         @RequestBody ExpenseAutoCreationRequest request
     ) {
-        Expense expense = expenseService.createAuto(user, groupExternalId, request);
+        Expense expense = expenseService.createAuto(user, groupId, request);
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(ExpenseResponse.from(expense));
@@ -116,10 +114,10 @@ public class GroupController {
     @PostMapping("/{groupId}/expense/manual")
     public ResponseEntity<ExpenseResponse> createExpenseManual(
         @AuthenticationPrincipal User user,
-        @PathVariable UUID groupExternalId,
+        @PathVariable UUID groupId,
         @RequestBody ExpenseManualCreationRequest request
     ) {
-        Expense expense = expenseService.createManual(user, groupExternalId, request);
+        Expense expense = expenseService.createManual(user, groupId, request);
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(ExpenseResponse.from(expense));

@@ -25,7 +25,7 @@ import lombok.Setter;
     sequenceName = "seq_expense_distribution",
     allocationSize = 10
 )
-@Table(name = "expense_split")
+@Table(name = "expense_distribution")
 @Builder
 public class ExpenseDistribution extends BaseEntity {
 
