@@ -43,6 +43,7 @@ public class SecurityConfig {
                 auth.dispatcherTypeMatchers(DispatcherType.ERROR)
                     .permitAll()
                     .requestMatchers("/uploads/**").permitAll()
+                    .requestMatchers("/ws-chat/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()

@@ -4,46 +4,57 @@ import com.role.net.RoleNet.dto.chat.ChatMessageRequest;
 import com.role.net.RoleNet.dto.chat.ChatMessageResponse;
 import com.role.net.RoleNet.dto.chat.TypingEvent;
 import com.role.net.RoleNet.entity.ChatMessage;
+import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.exception.ResourceNotFoundException;
+import com.role.net.RoleNet.repository.GroupRepository;
 import com.role.net.RoleNet.service.ChatService;
 import jakarta.validation.Valid;
+
+import org.springframework.security.core.Authentication;
+import java.util.UUID;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatWebSocketController {
 
     private final ChatService chatService;
+    private final GroupRepository groupRepository;
 
-    public ChatWebSocketController(ChatService chatService) {
+    public ChatWebSocketController(ChatService chatService, GroupRepository groupRepository) {
         this.chatService = chatService;
+        this.groupRepository = groupRepository;
     }
 
-    @MessageMapping("/chat/{groupId}/send")
-    @SendTo("/topic/group/{groupId}")
+    @MessageMapping("/chat/{externalId}/send")
+    @SendTo("/topic/group/{externalId}")
     public ChatMessageResponse sendMessage(
-            @DestinationVariable Long groupId,
+            @DestinationVariable String externalId,
             @Payload @Valid ChatMessageRequest request,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
-        Long userId = user.getId();
-        ChatMessage savedMessage = chatService.saveMessage(groupId, userId, request);
-
+        User user = (User) authentication.getPrincipal();
+        Group group = groupRepository.findByExternalId(UUID.fromString(externalId))
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found."));
+        
+        ChatMessage savedMessage = chatService.saveMessage(group.getId(), user.getId(), request);
         return ChatMessageResponse.from(savedMessage);
     }
 
-	@MessageMapping("/chat/{groupId}/typing")
-    @SendTo("/topic/group/{groupId}/typing")
+	@MessageMapping("/chat/{externalId}/typing")
+    @SendTo("/topic/group/{externalId}/typing")
     public TypingEvent handleTyping(
-            @DestinationVariable Long groupId,
+            @DestinationVariable String externalId,
             @Payload TypingEvent request,
-            @AuthenticationPrincipal User user
+            Authentication authentication
     ) {
+        User user = (User) authentication.getPrincipal();
         return new TypingEvent(user.getUsername(), request.isTyping());
     }
 }

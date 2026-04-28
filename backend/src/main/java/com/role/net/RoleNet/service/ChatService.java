@@ -3,8 +3,10 @@ package com.role.net.RoleNet.service;
 import com.role.net.RoleNet.entity.ChatMessage;
 import com.role.net.RoleNet.entity.Group;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.enums.GroupMemberStatus;
 import com.role.net.RoleNet.enums.MessageType;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
+import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.dto.chat.AiMentionEvent;
 import com.role.net.RoleNet.dto.chat.ChatMessageRequest;
 import com.role.net.RoleNet.dto.chat.ChatMessageResponse;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 public class ChatService {
@@ -41,10 +45,14 @@ public class ChatService {
     public ChatMessage saveMessage(Long groupId, Long userId, ChatMessageRequest request) {
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found."));
+                
         User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        if (!groupRepository.isGroupMember(groupId, userId, GroupMemberStatus.ACTIVE)) {
+            throw new UserNotAGroupMemberException("You are not a member of this group.");
+        }
 
 		ChatMessage message = ChatMessage.builder()
 				.group(group)
@@ -65,12 +73,16 @@ public class ChatService {
     }
 
 	@Transactional(readOnly = true)
-	public Page<ChatMessageResponse> getMessagesByGroup(Long groupId, Pageable pageable) {
-		if (!groupRepository.existsById(groupId)) {
-			throw new ResourceNotFoundException("Grupo não encontrado");
+	public Page<ChatMessageResponse> getMessagesByGroup(UUID externalId, Long userId, Pageable pageable) {
+		if (!groupRepository.findByExternalId(externalId).isPresent()) {
+			throw new ResourceNotFoundException("Group not found.");
 		}
 
-		return chatMessageRepository.findByGroupIdOrderByCreatedAtDesc(groupId, pageable)
+		if (!groupRepository.isGroupMemberByExternalId(externalId, userId, GroupMemberStatus.ACTIVE)) {
+			throw new UserNotAGroupMemberException("You are not a member of this group.");
+		}
+
+		return chatMessageRepository.findByGroupExternalIdOrderByCreatedAtDesc(externalId, pageable)
 				.map(ChatMessageResponse::from);
 	}
 }

@@ -13,7 +13,7 @@ public record ChatMessageResponse(
     public static ChatMessageResponse from(ChatMessage message) {
         String senderName = message.getType() == MessageType.USER && message.getSender() != null 
                             ? message.getSender().getDisplayName() 
-                            : "GoGather IA";
+                            : "GoGather AI";
 
         return new ChatMessageResponse(
             message.getContent(),
