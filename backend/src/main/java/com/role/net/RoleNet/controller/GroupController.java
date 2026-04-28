@@ -52,10 +52,9 @@ public class GroupController {
     @GetMapping("/{externalId}")
     public ResponseEntity<GroupDetailsResponse> getGroupDetails(
             @PathVariable UUID externalId,
-            @AuthenticationPrincipal User user) {
-        
+            @AuthenticationPrincipal User user
+	) {
         GroupDetailsResponse response = groupService.getGroupDetails(externalId, user.getId());
-        
         return ResponseEntity.ok(response);
     }
 

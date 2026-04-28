@@ -11,13 +11,14 @@ import com.role.net.RoleNet.repository.GroupRepository;
 import com.role.net.RoleNet.service.ChatService;
 import jakarta.validation.Valid;
 
-import java.security.Principal;
+import org.springframework.security.core.Authentication;
 import java.util.UUID;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -36,9 +37,9 @@ public class ChatWebSocketController {
     public ChatMessageResponse sendMessage(
             @DestinationVariable String externalId,
             @Payload @Valid ChatMessageRequest request,
-            Principal principal
+            Authentication authentication
     ) {
-        User user = (User) ((org.springframework.security.authentication.UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        User user = (User) authentication.getPrincipal();
         Group group = groupRepository.findByExternalId(UUID.fromString(externalId))
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found."));
         
@@ -51,9 +52,9 @@ public class ChatWebSocketController {
     public TypingEvent handleTyping(
             @DestinationVariable String externalId,
             @Payload TypingEvent request,
-            Principal principal
+            Authentication authentication
     ) {
-        User user = (User) ((org.springframework.security.authentication.UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        User user = (User) authentication.getPrincipal();
         return new TypingEvent(user.getUsername(), request.isTyping());
     }
 }
