@@ -40,7 +40,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             if (optUser.isPresent()) {
                 JWTUserData userData = optUser.get();
-                User user = userService.fingByInternalId(userData.userId());
+                User user = userService.findByInternalId(userData.userId());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

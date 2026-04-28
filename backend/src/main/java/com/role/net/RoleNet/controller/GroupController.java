@@ -1,7 +1,13 @@
 package com.role.net.RoleNet.controller;
 
+import com.role.net.RoleNet.entity.Expense;
 import com.role.net.RoleNet.entity.User;
+import com.role.net.RoleNet.service.ExpenseService;
 import com.role.net.RoleNet.service.GroupService;
+import com.role.net.RoleNet.config.JWTUserData;
+import com.role.net.RoleNet.dto.expense.ExpenseAutoCreationRequest;
+import com.role.net.RoleNet.dto.expense.ExpenseManualCreationRequest;
+import com.role.net.RoleNet.dto.expense.ExpenseResponse;
 import com.role.net.RoleNet.dto.group.CreateGroupRequest;
 import com.role.net.RoleNet.dto.group.GroupDetailsResponse;
 import com.role.net.RoleNet.dto.group.GroupResponse;
@@ -27,9 +33,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
     private final GroupService groupService;
+    private final ExpenseService expenseService;
 
-    public GroupController(GroupService groupService) {
+    public GroupController(
+        GroupService groupService,
+        ExpenseService expenseService
+    ) {
         this.groupService = groupService;
+        this.expenseService = expenseService;
     }
 
     @PostMapping
@@ -37,9 +48,9 @@ public class GroupController {
             @Valid @RequestBody CreateGroupRequest request,
             @AuthenticationPrincipal User user
 	) {
-        
+
         GroupResponse response = groupService.create(request, user.getId());
-        
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -53,8 +64,9 @@ public class GroupController {
     public ResponseEntity<GroupDetailsResponse> getGroupDetails(
             @PathVariable UUID externalId,
             @AuthenticationPrincipal User user
-	) {
+    ) {
         GroupDetailsResponse response = groupService.getGroupDetails(externalId, user.getId());
+
         return ResponseEntity.ok(response);
     }
 
@@ -84,5 +96,29 @@ public class GroupController {
     ) {
         groupService.acceptGroupInvite(groupId, loggedInUser);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{groupId}/expense/auto")
+    public ResponseEntity<ExpenseResponse> createExpenseAuto(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID groupId,
+        @RequestBody ExpenseAutoCreationRequest request
+    ) {
+        Expense expense = expenseService.createAuto(user, groupId, request);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(ExpenseResponse.from(expense));
+    }
+
+    @PostMapping("/{groupId}/expense/manual")
+    public ResponseEntity<ExpenseResponse> createExpenseManual(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID groupId,
+        @RequestBody ExpenseManualCreationRequest request
+    ) {
+        Expense expense = expenseService.createManual(user, groupId, request);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(ExpenseResponse.from(expense));
     }
 }

@@ -1,17 +1,20 @@
 package com.role.net.RoleNet.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.role.net.RoleNet.dto.user.RegisterPixKeyRequest;
 import com.role.net.RoleNet.dto.user.UpdateUserRequest;
 import com.role.net.RoleNet.dto.user.UpdateUserResponse;
 import com.role.net.RoleNet.dto.user.UserSearchResponse;
@@ -68,5 +71,14 @@ public class UserController {
     ) {
         this.userService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/pix")
+    public ResponseEntity<Void> registerPix(
+        @AuthenticationPrincipal User user,
+        @RequestBody RegisterPixKeyRequest request
+    ) {
+        userService.registerPix(user.getId(), request);
+        return ResponseEntity.noContent().build();
     }
 }

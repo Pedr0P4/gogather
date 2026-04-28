@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.role.net.RoleNet.dto.user.RegisterPixKeyRequest;
+import com.role.net.RoleNet.entity.PixInfo;
 import com.role.net.RoleNet.entity.User;
 import com.role.net.RoleNet.exception.DataDoesntMatchException;
 import com.role.net.RoleNet.exception.ResourceNotFoundException;
@@ -32,7 +34,7 @@ public class UserService {
         return user;
     }
 
-    public User fingByInternalId(Long id) {
+    public User findByInternalId(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found."));
     }
@@ -86,6 +88,21 @@ public class UserService {
     public void delete(String id) {
         User userToDelete = this.findById(id);
         this.userRepository.delete(userToDelete);
+    }
+
+    @Transactional
+    public void registerPix(Long loggedUserId, RegisterPixKeyRequest request) {
+        User user = userRepository.findById(loggedUserId)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        user.setPixInfo(
+            new PixInfo(
+                request.pixKey(),
+                request.merchantName(),
+                request.merchantCity(),
+                user
+            )
+        );
     }
 
 }

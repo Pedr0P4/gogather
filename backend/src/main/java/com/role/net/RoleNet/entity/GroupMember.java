@@ -1,5 +1,8 @@
 package com.role.net.RoleNet.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.role.net.RoleNet.enums.GroupMemberStatus;
 import com.role.net.RoleNet.enums.GroupRole;
 
@@ -10,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +29,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupMember extends BaseEntity {
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
@@ -45,4 +49,16 @@ public class GroupMember extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "invited_by_id", nullable = true)
     private User invitedBy;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "payer")
+    private Set<ExpenseContribution> expenseContributions = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "debtor")
+    private Set<ExpenseDistribution> expenseDistributions = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "creditor")
+    private Set<ExpenseDistribution> expensesReceived = new HashSet<>();
 }

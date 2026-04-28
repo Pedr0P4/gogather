@@ -43,7 +43,7 @@ public class ChatService {
 
     @Transactional
     public ChatMessage saveMessage(Long groupId, Long userId, ChatMessageRequest request) {
-        
+
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found."));
                 
