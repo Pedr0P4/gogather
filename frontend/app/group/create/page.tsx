@@ -15,6 +15,7 @@ export default function CreateRolePage() {
   const [step, setStep] = useState<Step>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [generatedInviteCode, setGeneratedInviteCode] = useState<string>("");
+  const [generatedGroupId, setGeneratedGroupId] = useState<string>("");
 
   const [formData, setFormData] = useState<EventFormData>({
     name: "",
@@ -49,13 +50,14 @@ export default function CreateRolePage() {
     try {
       const response = await api.post("/groups", payload);
 
-      const data = response.data as { inviteCode: string };
+      const data = response.data as { inviteCode: string; externalId: string };
 
       if (!data.inviteCode) {
         throw new Error("O servidor não retornou um código de convite válido.");
       }
 
       setGeneratedInviteCode(data.inviteCode);
+      setGeneratedGroupId(data.externalId);
       setStep(3);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -150,6 +152,7 @@ export default function CreateRolePage() {
           <Step3Share
             roleName={formData.name || "Novo Rolê"}
             inviteCode={generatedInviteCode}
+            groupId={generatedGroupId}
           />
         )}
       </section>
