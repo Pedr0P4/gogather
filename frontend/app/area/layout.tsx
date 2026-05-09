@@ -8,9 +8,9 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-screen bg-[#fbf1c7] font-sans">
-      <Navbar />
 
-      <div className="flex pt-[80px]">
+
+      <div className="flex">
         <Sidebar />
 
         {/* area de conteúdo principal onde as páginas vao renderizadas */}
