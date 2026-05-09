@@ -1,19 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, ExternalLink, PartyPopper } from "lucide-react";
+import { Check, Copy, ExternalLink, PartyPopper, UserPlus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+import { FriendData } from "@/app/types";
 
 interface StepShareProps {
   roleName: string;
   inviteCode: string;
+  groupId: string;
 }
 
-export const Step3Share = ({ roleName, inviteCode }: StepShareProps) => {
+export const Step3Share = ({ roleName, inviteCode, groupId }: StepShareProps) => {
   const router = useRouter();
   
   const [copied, setCopied] = useState<boolean>(false);
+  const [friends, setFriends] = useState<FriendData[]>([]);
+  const [invitedFriends, setInvitedFriends] = useState<Record<string, 'loading' | boolean>>({});
+  const [loadingFriends, setLoadingFriends] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const res = await api.get("/friendship");
+        const acceptedFriends = res.data.filter((f: FriendData) => f.status === 'ACCEPTED');
+        setFriends(acceptedFriends);
+      } catch (err) {
+        console.error("Erro ao buscar amigos:", err);
+      } finally {
+        setLoadingFriends(false);
+      }
+    };
+    fetchFriends();
+  }, []);
+
+  const handleInviteFriend = async (friendId: string) => {
+    try {
+      setInvitedFriends(prev => ({ ...prev, [friendId]: 'loading' }));
+      await api.post(`/groups/${groupId}/invite/${friendId}`);
+      setInvitedFriends(prev => ({ ...prev, [friendId]: true }));
+    } catch (err) {
+      console.error("Erro ao convidar amigo:", err);
+      setInvitedFriends(prev => ({ ...prev, [friendId]: false }));
+    }
+  };
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
@@ -77,7 +109,57 @@ export const Step3Share = ({ roleName, inviteCode }: StepShareProps) => {
 
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs font-medium text-gray-400">ou</span>
+            <span className="text-xs font-medium text-gray-400">ou convide seus amigos</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="bg-gray-50 rounded-xl border border-gray-100 p-4 max-h-60 overflow-y-auto space-y-3">
+            {loadingFriends ? (
+              <div className="flex justify-center items-center py-4">
+                <Loader2 className="h-6 w-6 animate-spin text-[#cc241a]" />
+              </div>
+            ) : friends.length === 0 ? (
+              <p className="text-center text-sm text-gray-500 py-2">Você ainda não tem amigos adicionados.</p>
+            ) : (
+              friends.map(friend => (
+                <div key={friend.friendExternalId} className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-gray-900">{friend.friendDisplayName}</span>
+                    <span className="text-xs text-gray-500">@{friend.friendUsername}</span>
+                  </div>
+                  <Button 
+                    size="sm"
+                    variant={invitedFriends[friend.friendExternalId] === true ? "outline" : "default"}
+                    onClick={() => handleInviteFriend(friend.friendExternalId)}
+                    disabled={!!invitedFriends[friend.friendExternalId]}
+                    className={
+                      invitedFriends[friend.friendExternalId] === true 
+                        ? "text-green-600 border-green-200 bg-green-50"
+                        : "bg-[#cc241a] hover:bg-gray-800 text-white"
+                    }
+                  >
+                    {invitedFriends[friend.friendExternalId] === 'loading' ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : invitedFriends[friend.friendExternalId] === true ? (
+                      <>
+                        <Check className="h-4 w-4 mr-1" />
+                        Convidado
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4 mr-1" />
+                        Convidar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-medium text-gray-400">ou vá para o painel</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
