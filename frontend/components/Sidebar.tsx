@@ -84,7 +84,7 @@ export default function Sidebar() {
           </DropdownMenuContent>
         </DropdownMenu>
         <HoverCard openDelay={50} closeDelay={0}>
-          <HoverCardTrigger>
+          <HoverCardTrigger asChild>
             <Link
               href="/area/configuracoes"
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
