@@ -83,7 +83,7 @@ public class GroupService {
     }
 
 	public List<GroupResponse> getUserGroups(Long userId) {
-        return groupRepository.findGroupsByUserId(userId).stream()
+        return groupRepository.findGroupsByUserId(userId, GroupMemberStatus.ACTIVE).stream()
 			.map(group -> new GroupResponse(
 				group.getExternalId(),
 				group.getName(),
