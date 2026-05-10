@@ -75,6 +75,8 @@ public class AiService {
                 .system(systemPrompt)
                 .user(event.content())
                 .advisors(a -> a.param(MessageChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, groupId.toString()))
+                // registrando a ferramenta de busca de locais que criei em AiToolsConfig, depois das alterações propostas por Hennrique
+                .functions("searchPlacesTool")
                 .call()
                 .content();
 

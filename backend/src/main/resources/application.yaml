@@ -25,3 +25,6 @@ spring:
       chat:
         options:
           model: gpt-4o-mini
+google:
+  places:
+    api-key: ${GOOGLE_PLACES_API_KEY}
