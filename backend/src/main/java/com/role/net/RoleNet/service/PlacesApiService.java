@@ -25,7 +25,7 @@ public class PlacesApiService {
                     .header("X-Goog-Api-Key", apiKey)
                     .header("Content-Type", "application/json")
                     // Filtramos apenas os campos úteis para economizar tokens da IA
-                    .header("X-Goog-FieldMask", "places.displayName,places.formattedAddress,places.rating,places.priceLevel")
+                    .header("X-Goog-FieldMask", "places.id,places.displayName,places.formattedAddress,places.rating,places.priceLevel")
                     .body(requestBody)
                     .retrieve()
                     .body(String.class);

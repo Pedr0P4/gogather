@@ -17,10 +17,17 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
+import org.springframework.ai.converter.BeanOutputConverter;
+import com.role.net.RoleNet.entity.Poll;
+import com.role.net.RoleNet.entity.PollOption;
 
+import java.util.List;
+import java.util.stream.Collectors;
 @Service
 public class AiService {
+
+    public record PollOptionData(String text, String placeId) {}
+    public record AiResponseData(String message, List<PollOptionData> pollOptions) {}
 
     private final ChatClient chatClient;
     private final GroupRepository groupRepository;
@@ -70,9 +77,14 @@ public class AiService {
             group.getEventDate().toString(), 
             stopsContext.isEmpty() ? "Ainda não definido" : stopsContext
         );
+
+        BeanOutputConverter<AiResponseData> converter = new BeanOutputConverter<>(AiResponseData.class);
+        
+        String finalSystemPrompt = systemPrompt + "\n\n{format}";
+
         //to usando o groupId.toString() como a chave da memória(conversationId) para isolar o histórico por rolê
         String aiResponseText = this.chatClient.prompt()
-                .system(systemPrompt)
+                .system(s -> s.text(finalSystemPrompt).param("format", converter.getFormat()))
                 .user(event.content())
                 .advisors(a -> a.param(MessageChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, groupId.toString()))
                 // registrando a ferramenta de busca de locais que criei em AiToolsConfig, depois das alterações propostas por Hennrique
@@ -80,12 +92,31 @@ public class AiService {
                 .call()
                 .content();
 
+        AiResponseData data = converter.convert(aiResponseText);
+
         ChatMessage aiMessage = ChatMessage.builder()
                 .group(group)
                 .sender(null)// o sender pode ser null oq a IA não tem um user associado
-                .content(aiResponseText)
+                .content(data.message())
                 .type(MessageType.AI)
                 .build();
+
+        if (data.pollOptions() != null && !data.pollOptions().isEmpty()) {
+            Poll poll = Poll.builder()
+                .chatMessage(aiMessage)
+                .build();
+            
+            List<PollOption> options = data.pollOptions().stream().map(opt -> PollOption.builder()
+                .poll(poll)
+                .text(opt.text())
+                .placeId(opt.placeId())
+                .votes(0)
+                .build())
+            .toList();
+            
+            poll.setOptions(options);
+            aiMessage.setPoll(poll);
+        }
 
         ChatMessage savedAiMessage = chatMessageRepository.save(aiMessage);
         ChatMessageResponse responsePayload = ChatMessageResponse.from(savedAiMessage);

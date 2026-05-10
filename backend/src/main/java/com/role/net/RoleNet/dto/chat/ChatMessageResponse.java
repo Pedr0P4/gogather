@@ -8,7 +8,8 @@ public record ChatMessageResponse(
     String content,
     String senderName,
     MessageType type,
-    Instant createdAt
+    Instant createdAt,
+    PollResponse poll
 ) {
     public static ChatMessageResponse from(ChatMessage message) {
         String senderName = message.getType() == MessageType.USER && message.getSender() != null 
@@ -19,7 +20,8 @@ public record ChatMessageResponse(
             message.getContent(),
             senderName,
             message.getType(),
-            message.getCreatedAt()
+            message.getCreatedAt(),
+            PollResponse.from(message.getPoll())
         );
     }
 }

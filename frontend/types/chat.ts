@@ -1,8 +1,22 @@
+export interface PollOptionResponse {
+  id: number;
+  text: string;
+  placeId: string | null;
+  votes: number;
+  voterIds: number[];
+}
+
+export interface PollResponse {
+  id: number;
+  options: PollOptionResponse[];
+}
+
 export interface ChatMessage {
   content: string;
   senderName: string;
   type: "USER" | "AI";
   createdAt: string;
+  poll?: PollResponse;
 }
 
 export interface TypingEvent {
