@@ -16,7 +16,7 @@ export interface GroupData {
   createdAt: Date,
   eventDate: Date,
   members: {
-    memberExternalId: string,
+    externalId: string,
     displayName: string,
     username: string,
     role: string,

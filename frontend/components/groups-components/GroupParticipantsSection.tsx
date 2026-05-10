@@ -43,7 +43,7 @@ export function GroupParticipantsSection({ groupId }: { groupId: string }) {
           const initials = nameToUse.substring(0, 2).toUpperCase();
           
           return (
-            <div key={member.memberExternalId} className="flex items-center gap-3 group/member cursor-default">
+            <div key={member.externalId} className="flex items-center gap-3 group/member cursor-default">
               <div className="w-9 h-9 rounded-full bg-gg-cyan-extralight text-gg-cyan-dark flex items-center justify-center text-xs font-bold shrink-0 border border-gg-cyan/10 group-hover/member:bg-gg-cyan group-hover/member:text-white transition-colors duration-200">
                 {initials}
               </div>
