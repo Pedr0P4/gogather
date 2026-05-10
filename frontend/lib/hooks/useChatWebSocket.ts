@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { ChatMessage, TypingEvent } from "@/types/chat";
+import { ChatMessage, TypingEvent, PollResponse } from "@/types/chat";
 import { useAuth } from "@/context/AuthContext";
 
 export const useChatWebSocket = (externalId: string) => {
@@ -45,6 +45,13 @@ export const useChatWebSocket = (externalId: string) => {
             }
             return newSet;
           });
+        });
+
+        client.subscribe(`/topic/group/${externalId}/poll-update`, (message: IMessage) => {
+          const updatedPoll: PollResponse = JSON.parse(message.body);
+          setMessages((prev) => 
+            prev.map(m => m.poll?.id === updatedPoll.id ? { ...m, poll: updatedPoll } : m)
+          );
         });
       },
       onDisconnect: () => {

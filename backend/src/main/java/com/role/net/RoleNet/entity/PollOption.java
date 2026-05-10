@@ -25,4 +25,8 @@ public class PollOption extends BaseEntity {
     @Builder.Default
     @Column(nullable = false)
     private int votes = 0;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "pollOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<PollVote> userVotes = new java.util.ArrayList<>();
 }

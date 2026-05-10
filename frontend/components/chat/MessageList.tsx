@@ -6,9 +6,10 @@ import { useAuth } from "@/context/AuthContext";
 interface MessageListProps {
   messages: ChatMessage[];
   typingUsers: Set<string>;
+  onVote: (optionId: number) => void;
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers }) => {
+export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers, onVote }) => {
   const { user } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +34,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers 
               msg.type === "USER" &&
               (user?.displayName === msg.senderName || user?.username === msg.senderName)
             }
+            onVote={onVote}
           />
         ))
       )}

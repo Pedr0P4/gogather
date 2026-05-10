@@ -48,6 +48,14 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
     }
   }, [externalId, setMessages]);
 
+  const handleVote = useCallback(async (optionId: number) => {
+    try {
+      await api.post(`/groups/${externalId}/polls/options/${optionId}/vote`);
+    } catch (error) {
+      console.error("Erro ao votar na enquete:", error);
+    }
+  }, [externalId]);
+
   useEffect(() => {
     if (user) {
       fetchGroupDetails();
@@ -104,7 +112,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
           </div>
         )}
         
-        <MessageList messages={messages} typingUsers={typingUsers} />
+        <MessageList messages={messages} typingUsers={typingUsers} onVote={handleVote} />
       </div>
 
       {/* Input */}

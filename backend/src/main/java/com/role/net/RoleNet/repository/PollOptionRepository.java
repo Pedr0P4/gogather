@@ -13,4 +13,8 @@ public interface PollOptionRepository extends JpaRepository<PollOption, Long> {
     @Modifying
     @Query("UPDATE PollOption p SET p.votes = p.votes + 1 WHERE p.id = :id")
     void incrementVote(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE PollOption p SET p.votes = p.votes - 1 WHERE p.id = :id AND p.votes > 0")
+    void decrementVote(@Param("id") Long id);
 }
