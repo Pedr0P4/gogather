@@ -21,17 +21,17 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const {user, isLoading, logout} = useAuth();
+  const { user, isLoading, logout } = useAuth();
 
   const menuItems = [
     { name: "Visão Geral", desc: "Dashboards e guias rápidos!", icon: LayoutDashboard, href: "/area/dashboard" },
-    { name: "Meus Rolês", desc: "Os rolês que criou ou que participa!", icon: Map, href: "/area/roles" },
+    { name: "Meus Rolês", desc: "Os rolês que criou ou que participa!", icon: Map, href: "/area/groups" },
     { name: "Amigos", desc: "Suas amizades para animar o rolê!", icon: Users, href: "/area/friends" },
     { name: "Explorar IA", desc: "O seu braço direito nas escolhas de rolês!", icon: Compass, href: "/area/explore" },
     { name: "Convites", desc: "Rolês que querem sua presença!", icon: Mail, href: "/area/invites" },
   ];
   return (
-    <aside className="w-fit fixed left-0 top-0 h-full bg-white border-r border-gray-100 shadow-sm flex flex-col justify-between py-6 z-40">
+    <aside className="w-14 fixed left-0 top-0 h-full bg-white flex flex-col justify-between py-6 z-40">
       <div className="space-y-2 flex flex-col items-center">
         {menuItems.map((item, index) => {
           const isActive = pathname === item.href; //faz a verificação se a rota atual é a do item
@@ -44,7 +44,7 @@ export default function Sidebar() {
                   {`text-gg-cyan hover:text-gg-cyan-dark hover:bg-gg-cyan-extralight
                     rounded-xl p-2 transition-all ${isActive ? 'bg-gg-cyan-extralight text-gg-cyan-dark' : ''}`}
                   href={item.href}>
-                    <item.icon className='w-6 h-6'/>
+                  <item.icon className='w-6 h-6' />
                 </Link>
               </HoverCardTrigger>
               <HoverCardContent side='right' className='flex flex-col bg-white ml-2'>
@@ -66,18 +66,18 @@ export default function Sidebar() {
           <DropdownMenuContent side='right'>
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <UserRoundSearch/>
+                <UserRoundSearch />
                 Perfil
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell/>
+                <Bell />
                 Notificações
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem variant='destructive' onClick={logout}>
-                <LogOut/>
+                <LogOut />
                 Sair
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -87,11 +87,10 @@ export default function Sidebar() {
           <HoverCardTrigger asChild>
             <Link
               href="/area/configuracoes"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-                pathname === "/dashboard/configuracoes"
-                  ? 'bg-[#fbf2c7] text-[#cc241a]'
-                  : 'text-gg-cyan hover:bg-gg-cyan-extralight hover:text-gg-cyan-dark'
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${pathname === "/dashboard/configuracoes"
+                ? 'bg-[#fbf2c7] text-[#cc241a]'
+                : 'text-gg-cyan hover:bg-gg-cyan-extralight hover:text-gg-cyan-dark'
+                }`}
             >
               <Settings className="w-8 h-8" />
             </Link>

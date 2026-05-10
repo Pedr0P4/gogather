@@ -37,5 +37,9 @@ public class EventStop extends BaseEntity {
     private String category;
 
     @Column(name = "stop_order", nullable = false)
-    private Integer stopOrder;  
+    private Integer stopOrder;
+
+    private String city;
+
+    private String state;
 }

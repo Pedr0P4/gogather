@@ -8,6 +8,40 @@ export interface StandardError {
   path: string;
 }
 
+export interface GroupData {
+  externalId: string,
+  name: string,
+  description: string,
+  inviteCode: string,
+  createdAt: Date,
+  eventDate: Date,
+  members: {
+    memberExternalId: string,
+    displayName: string,
+    username: string,
+    role: string,
+    email: string
+  }[],
+  eventStops?: {
+    name: string,
+    latitude: number,
+    longitude: number,
+    category: string,
+    stopOrder: number,
+    city?: string,
+    state?: string
+  }[]
+}
+
+export interface GroupSimpleData {
+  externalId: string,
+  name: string,
+  description: string,
+  inviteCode: string,
+  eventDate: Date,
+  memberAmount: number
+}
+
 export interface EventFormData {
   name: string;
   date: string;

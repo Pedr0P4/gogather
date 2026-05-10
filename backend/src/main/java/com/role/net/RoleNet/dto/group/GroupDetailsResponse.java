@@ -13,7 +13,8 @@ public record GroupDetailsResponse(
     String inviteCode,
     Instant createdAt,
     Instant eventDate,
-    List<MemberDTO> members
+    List<MemberDTO> members,
+    List<EventStopDTO> eventStops
 ) {
     public record MemberDTO(
 		UUID externalId,
@@ -22,4 +23,14 @@ public record GroupDetailsResponse(
 		GroupRole role,
 		String email
 	) {}
+
+    public record EventStopDTO(
+        String name,
+        Double latitude,
+        Double longitude,
+        String category,
+        Integer stopOrder,
+        String city,
+        String state
+    ) {}
 }

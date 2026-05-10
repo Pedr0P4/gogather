@@ -52,9 +52,11 @@ public class GroupService {
 				.longitude(stopRequest.longitude())
 				.category(stopRequest.category())
 				.stopOrder(stopRequest.order())
-				.group(savedGroup) 
+				.city(stopRequest.city())
+				.state(stopRequest.state())
+				.group(savedGroup)
 				.build();
-            
+
             savedGroup.getEventStops().add(stop);
         });
 
@@ -63,7 +65,7 @@ public class GroupService {
 			.user(adminUser)
 			.role(GroupRole.ADMIN)
             .status(com.role.net.RoleNet.enums.GroupMemberStatus.ACTIVE)
-            .invitedBy(null) 
+            .invitedBy(null)
 			.build();
 
         savedGroup.getMembers().add(adminMember);
@@ -75,7 +77,8 @@ public class GroupService {
 			updatedGroup.getName(),
 			updatedGroup.getDescription(),
 			updatedGroup.getInviteCode(),
-			updatedGroup.getEventDate()
+			updatedGroup.getEventDate(),
+			updatedGroup.getMembers().size()
         );
     }
 
@@ -86,7 +89,8 @@ public class GroupService {
 				group.getName(),
 				group.getDescription(),
 				group.getInviteCode(),
-				group.getEventDate()
+				group.getEventDate(),
+				group.getMembers().size()
 			))
 			.toList();
     }
@@ -99,9 +103,9 @@ public class GroupService {
 		System.out.println("DEBUG: Checking if user " + userId + " is member of group " + externalId.toString());
         boolean isMember = groupRepository.isGroupMemberByExternalId(externalId, userId, GroupMemberStatus.ACTIVE);
 		System.out.println("DEBUG: User " + userId + " is member of group " + externalId.toString() + ": " + isMember);
-		
+
         if (!isMember) {
-            throw new UserNotAGroupMemberException("User is not a member of this group");	
+            throw new UserNotAGroupMemberException("User is not a member of this group");
         }
 
         List<GroupDetailsResponse.MemberDTO> members = group.getMembers().stream()
@@ -114,6 +118,18 @@ public class GroupService {
 			))
 			.toList();
 
+        List<GroupDetailsResponse.EventStopDTO> eventStops = group.getEventStops().stream()
+			.map(stop -> new GroupDetailsResponse.EventStopDTO(
+				stop.getName(),
+				stop.getLatitude(),
+				stop.getLongitude(),
+				stop.getCategory(),
+				stop.getStopOrder(),
+				stop.getCity(),
+				stop.getState()
+			))
+			.toList();
+
         return new GroupDetailsResponse(
 			group.getExternalId(),
 			group.getName(),
@@ -121,7 +137,8 @@ public class GroupService {
 			group.getInviteCode(),
 			group.getCreatedAt(),
 			group.getEventDate(),
-			members
+			members,
+			eventStops
         );
     }
 
@@ -130,7 +147,7 @@ public class GroupService {
         Group group = groupRepository.findByInviteCode(inviteCode)
             .orElseThrow(() -> new ResourceNotFoundException("Rolê não encontrado com esse código."));
 
-        boolean alreadyMember = group.getMembers().stream() 
+        boolean alreadyMember = group.getMembers().stream()
             .anyMatch(member -> member.getUser().getId().equals(loggedInUser.getId()));
 
         if (alreadyMember) {
@@ -142,8 +159,8 @@ public class GroupService {
         newMember.setUser(loggedInUser);
         newMember.setStatus(GroupMemberStatus.ACTIVE);
         newMember.setInvitedBy(null);
-        
-        newMember.setRole(GroupRole.MEMBER); 
+
+        newMember.setRole(GroupRole.MEMBER);
 
         group.getMembers().add(newMember);
         groupRepository.save(group);
@@ -171,8 +188,8 @@ public class GroupService {
         newMember.setUser(friend);
         newMember.setStatus(GroupMemberStatus.PENDING);
         newMember.setInvitedBy(loggedInUser);
-        
-        newMember.setRole(GroupRole.MEMBER); 
+
+        newMember.setRole(GroupRole.MEMBER);
 
         group.getMembers().add(newMember);
         groupRepository.save(group);
@@ -192,8 +209,8 @@ public class GroupService {
             throw new InvalidRequestException("Você já faz parte deste rolê.");
         }
         invite.setStatus(GroupMemberStatus.ACTIVE);
-        
-        groupRepository.save(group); 
+
+        groupRepository.save(group);
     }
 
 
