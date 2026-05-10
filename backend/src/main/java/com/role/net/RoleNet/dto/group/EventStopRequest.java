@@ -16,5 +16,9 @@ public record EventStopRequest(
     String category,
 
     @NotNull(message = "The order of the stop is required")
-    Integer order
+    Integer order,
+
+    String city,
+
+    String state
 ) {}

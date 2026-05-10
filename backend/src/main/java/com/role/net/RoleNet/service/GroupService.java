@@ -52,6 +52,8 @@ public class GroupService {
 				.longitude(stopRequest.longitude())
 				.category(stopRequest.category())
 				.stopOrder(stopRequest.order())
+				.city(stopRequest.city())
+				.state(stopRequest.state())
 				.group(savedGroup)
 				.build();
 
@@ -116,6 +118,18 @@ public class GroupService {
 			))
 			.toList();
 
+        List<GroupDetailsResponse.EventStopDTO> eventStops = group.getEventStops().stream()
+			.map(stop -> new GroupDetailsResponse.EventStopDTO(
+				stop.getName(),
+				stop.getLatitude(),
+				stop.getLongitude(),
+				stop.getCategory(),
+				stop.getStopOrder(),
+				stop.getCity(),
+				stop.getState()
+			))
+			.toList();
+
         return new GroupDetailsResponse(
 			group.getExternalId(),
 			group.getName(),
@@ -123,7 +137,8 @@ public class GroupService {
 			group.getInviteCode(),
 			group.getCreatedAt(),
 			group.getEventDate(),
-			members
+			members,
+			eventStops
         );
     }
 

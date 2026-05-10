@@ -34,20 +34,20 @@ export function GroupParticipantsSection({ groupId }: { groupId: string }) {
 
   return (
     <div>
-      <h3 className="text-xs font-bold text-gray-500 mb-4 tracking-wider">
+      <h3 className="text-xs font-extrabold text-gray-400 mb-5 tracking-[0.1em] uppercase">
         PARTICIPANTES ({members.length})
       </h3>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         {members.map((member) => {
           const nameToUse = member.displayName || member.username || 'U';
           const initials = nameToUse.substring(0, 2).toUpperCase();
           
           return (
-            <div key={member.memberExternalId} className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gg-cyan-extralight text-gg-cyan-dark flex items-center justify-center text-xs font-bold shrink-0">
+            <div key={member.memberExternalId} className="flex items-center gap-3 group/member cursor-default">
+              <div className="w-9 h-9 rounded-full bg-gg-cyan-extralight text-gg-cyan-dark flex items-center justify-center text-xs font-bold shrink-0 border border-gg-cyan/10 group-hover/member:bg-gg-cyan group-hover/member:text-white transition-colors duration-200">
                 {initials}
               </div>
-              <span className="text-sm font-medium text-gray-700 truncate">
+              <span className="text-sm font-semibold text-gray-700 truncate group-hover/member:text-gray-900 transition-colors">
                 {nameToUse}
               </span>
             </div>

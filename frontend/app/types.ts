@@ -21,6 +21,15 @@ export interface GroupData {
     username: string,
     role: string,
     email: string
+  }[],
+  eventStops?: {
+    name: string,
+    latitude: number,
+    longitude: number,
+    category: string,
+    stopOrder: number,
+    city?: string,
+    state?: string
   }[]
 }
 
