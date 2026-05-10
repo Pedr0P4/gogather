@@ -14,7 +14,7 @@ export default function DashboardLayout({
         <Sidebar />
 
         {/* area de conteúdo principal onde as páginas vao renderizadas */}
-        <main className="flex-1 ml-64 p-8"> {/* ml-64 para dar espaço para a Sidebar fixa */}
+        <main className='ml-14 w-full'>
           {children}
         </main>
       </div>

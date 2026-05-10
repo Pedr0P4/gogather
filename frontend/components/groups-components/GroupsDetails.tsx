@@ -1,0 +1,15 @@
+import { GroupInfoSection } from "./GroupInfoSection";
+import { GroupBalancePlaceholder } from "./GroupBalancePlaceholder";
+import { GroupParticipantsSection } from "./GroupParticipantsSection";
+
+export function GroupsDetails({ groupId }: { groupId: string }) {
+  return (
+    <aside className="w-full h-full flex flex-col bg-gg-beige-extralight overflow-y-auto">
+      <div className="p-6 flex flex-col gap-8">
+        <GroupInfoSection groupId={groupId} />
+        <GroupBalancePlaceholder />
+        <GroupParticipantsSection groupId={groupId} />
+      </div>
+    </aside>
+  );
+}
