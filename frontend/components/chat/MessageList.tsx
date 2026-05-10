@@ -7,9 +7,10 @@ interface MessageListProps {
   messages: ChatMessage[];
   typingUsers: Set<string>;
   onVote: (optionId: number) => void;
+  totalMembers: number;
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers, onVote }) => {
+export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers, onVote, totalMembers }) => {
   const { user } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +36,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, typingUsers,
               (user?.displayName === msg.senderName || user?.username === msg.senderName)
             }
             onVote={onVote}
+            totalMembers={totalMembers}
           />
         ))
       )}

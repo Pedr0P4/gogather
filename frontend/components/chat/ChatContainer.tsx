@@ -112,7 +112,12 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
           </div>
         )}
         
-        <MessageList messages={messages} typingUsers={typingUsers} onVote={handleVote} />
+        <MessageList 
+          messages={messages} 
+          typingUsers={typingUsers} 
+          onVote={handleVote} 
+          totalMembers={groupDetails?.members.length || 0}
+        />
       </div>
 
       {/* Input */}

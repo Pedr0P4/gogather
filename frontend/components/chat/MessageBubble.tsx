@@ -7,11 +7,12 @@ interface MessageBubbleProps {
   message: ChatMessage;
   isCurrentUser: boolean;
   onVote: (optionId: number) => void;
+  totalMembers: number;
 }
 
 import { useAuth } from "@/context/AuthContext";
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isCurrentUser, onVote }) => {
+export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isCurrentUser, onVote, totalMembers }) => {
   const { user } = useAuth();
   const time = new Date(message.createdAt).toLocaleTimeString([], {
     hour: "2-digit",
@@ -53,11 +54,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isCurrent
               </span>
             </div>
             {[...message.poll.options]
-              .sort((a, b) => b.votes - a.votes)
+              .sort((a, b) => a.id - b.id)
               .map((option) => {
               const hasVoted = user?.id ? option.voterIds.includes(user.id) : false;
-              const totalVotes = message.poll!.options.reduce((sum, opt) => sum + opt.votes, 0);
-              const percentage = totalVotes > 0 ? Math.round((option.votes / totalVotes) * 100) : 0;
+              const percentage = totalMembers > 0 ? Math.round((option.votes / totalMembers) * 100) : 0;
               
               return (
                 <button
@@ -83,7 +83,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isCurrent
                   </span>
                   
                   <div className="relative z-10 flex items-center gap-2 shrink-0 ml-2">
-                    {totalVotes > 0 && (
+                    {totalMembers > 0 && (
                       <span className={cn("text-xs font-semibold", hasVoted ? "text-[#458588]" : "text-gray-500")}>
                         {percentage}%
                       </span>
