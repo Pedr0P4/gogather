@@ -24,6 +24,13 @@ export interface TypingEvent {
   isTyping: boolean;
 }
 
+export interface EventStopDTO {
+  name: string;
+  category: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface GroupDetails {
   externalId: string;
   name: string;
@@ -32,6 +39,7 @@ export interface GroupDetails {
   createdAt: string;
   eventDate: string;
   members: GroupMemberDTO[];
+  eventStops?: EventStopDTO[];
 }
 
 export interface GroupMemberDTO {
