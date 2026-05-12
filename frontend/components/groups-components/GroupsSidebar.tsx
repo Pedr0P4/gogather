@@ -1,17 +1,75 @@
 "use client"
 
-import { GroupSimpleData } from "@/app/types"
-import { api } from "@/lib/api"
-import { useQuery } from "@tanstack/react-query"
-import { Search, Plus } from "lucide-react"
-import { useState } from "react"
+import { GroupSimpleData } from "@/app/types";
+import { api } from "@/lib/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Search, Plus } from "lucide-react";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import z from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface GroupsSidebarProps {
   selectedGroupId?: string | null;
   onSelectGroup?: (id: string) => void;
 }
 
+const formSchema = z.object({
+  code: z
+    .string()
+    .length(8, { error: "O código de convite deve ter 8 caracteres" })
+});
+
 export function GroupsSidebar({ selectedGroupId, onSelectGroup }: GroupsSidebarProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      code: ""
+    },
+  });
+
+  const queryClient = useQueryClient();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const joinGroupMutation = useMutation({
+    mutationFn: async (inviteCode: string) => {
+      await api.post(`/groups/join/${inviteCode}`);
+    },
+    onSuccess: () => {
+      toast.success("Você entrou no rolê com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['groups-list'] });
+      setIsDialogOpen(false);
+      form.reset();
+    },
+    onError: (error: any) => {
+      const backendMessage = error.response?.data?.message;
+      toast.error(backendMessage || "Erro ao entrar no rolê.");
+    }
+  });
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    joinGroupMutation.mutate(data.code);
+  }
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const {data: groups, isLoading} = useQuery({
@@ -38,9 +96,67 @@ export function GroupsSidebar({ selectedGroupId, onSelectGroup }: GroupsSidebarP
     <aside className="h-full w-full bg-gg-beige-extralight flex flex-col p-4 border-r border-gray-100">
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-bold text-xl text-gray-900">Meus Rolês</h1>
-        <button className="p-1 hover:bg-gg-beige-light rounded-md transition-colors text-gray-500">
-          <Plus className="w-5 h-5" />
-        </button>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) {
+            joinGroupMutation.reset();
+            form.reset();
+          }
+        }}>
+          <DialogTrigger asChild>
+            <button className="p-1 hover:bg-gg-beige-light rounded-md transition-colors text-gray-500">
+              <Plus className="w-5 h-5" />
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Entrar em um Rolê</DialogTitle>
+            </DialogHeader>
+            <div>
+              <form id="form-group" onSubmit={form.handleSubmit(onSubmit)}>
+                {joinGroupMutation.isError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600 animate-in fade-in slide-in-from-top-1">
+                    {(joinGroupMutation.error)?.response?.data?.message || "Erro ao entrar no rolê."}
+                  </div>
+                )}
+                <FieldGroup>
+                  <Controller
+                    name="code"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel htmlFor="form-group-code">
+                          Código de Convite
+                        </FieldLabel>
+                        <Input
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value.toUpperCase();
+                            field.onChange(value);
+                          }}
+                          id="form-group-code"
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Código de 8 dígitos..."
+                          autoComplete="off"
+                          disabled={joinGroupMutation.isPending}
+                          className="uppercase"
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+              </form>
+            </div>
+            <DialogFooter>
+              <Button type="submit" form="form-group" disabled={joinGroupMutation.isPending}>
+                {joinGroupMutation.isPending ? "Entrando..." : "Entrar"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="relative mb-6">

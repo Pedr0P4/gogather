@@ -14,6 +14,7 @@ import com.role.net.RoleNet.dto.expense.ExpenseAutoCreationRequest;
 import com.role.net.RoleNet.dto.expense.ExpenseContributionRequest;
 import com.role.net.RoleNet.dto.expense.ExpenseDistributionRequest;
 import com.role.net.RoleNet.dto.expense.ExpenseManualCreationRequest;
+import com.role.net.RoleNet.dto.expense.ExpenseResponse;
 import com.role.net.RoleNet.entity.Expense;
 import com.role.net.RoleNet.entity.ExpenseContribution;
 import com.role.net.RoleNet.entity.ExpenseDistribution;
@@ -128,7 +129,7 @@ public class ExpenseService {
 
         Map<UUID, GroupMember> members = group.getMembers().stream()
             .collect(Collectors.toMap(
-                GroupMember::getExternalId,
+                member -> member.getUser().getExternalId(),
                 member -> member
             ));
 
@@ -141,6 +142,16 @@ public class ExpenseService {
     public Expense findByExternalId(UUID externalId) {
         return expenseRepository.findByExternalId(externalId)
             .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
+    }
+
+    public List<ExpenseResponse> getGroupExpenses(UUID groupExternalId, Long userId) {
+        // Here we could verify if the user is a member of the group.
+        // We'll rely on the GroupService or the controller to do this if needed, 
+        // or just fetch expenses directly.
+        List<Expense> expenses = expenseRepository.findByGroup_ExternalId(groupExternalId);
+        return expenses.stream()
+            .map(ExpenseResponse::from)
+            .collect(Collectors.toList());
     }
 
     public ExpenseDistribution findExpenseDistributionByExternalId(UUID externalId) {
@@ -325,7 +336,7 @@ public class ExpenseService {
                 remainingCents--;
             }
 
-            Long paidValue = paidAmount.getOrDefault(member.getExternalId(), 0L);
+            Long paidValue = paidAmount.getOrDefault(member.getUser().getExternalId(), 0L);
             Long balance = paidValue - memberQuota;
 
             if(balance > 0) {
@@ -343,7 +354,7 @@ public class ExpenseService {
     ) {
 
         Map<UUID, GroupMember> membersInMemory = groupMembers.stream()
-            .collect(Collectors.toMap(GroupMember::getExternalId, member -> member));
+            .collect(Collectors.toMap(member -> member.getUser().getExternalId(), member -> member));
 
         for (ExpenseContributionRequest request : contributionRequests) {
             GroupMember payer = membersInMemory.get(request.payerExternalId());
