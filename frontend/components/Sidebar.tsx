@@ -27,8 +27,8 @@ export default function Sidebar() {
     { name: "Visão Geral", desc: "Dashboards e guias rápidos!", icon: LayoutDashboard, href: "/area/dashboard" },
     { name: "Meus Rolês", desc: "Os rolês que criou ou que participa!", icon: Map, href: "/area/groups" },
     { name: "Amigos", desc: "Suas amizades para animar o rolê!", icon: Users, href: "/area/friends" },
-    { name: "Explorar IA", desc: "O seu braço direito nas escolhas de rolês!", icon: Compass, href: "/area/explore" },
-    { name: "Convites", desc: "Rolês que querem sua presença!", icon: Mail, href: "/area/invites" },
+    // { name: "Explorar IA", desc: "O seu braço direito nas escolhas de rolês!", icon: Compass, href: "/area/explore" },
+    // { name: "Convites", desc: "Rolês que querem sua presença!", icon: Mail, href: "/area/invites" },
   ];
   return (
     <aside className="w-14 fixed left-0 top-0 h-full bg-white flex flex-col justify-between py-6 z-40">
