@@ -106,7 +106,7 @@ export function ExpensesList({ groupId, members }: { groupId: string, members: {
                     const isDebtor = dist.debtorExternalId === user?.id?.toString();
                     const isCreditor = dist.creditorExternalId === user?.id?.toString();
 
-                    if (!isDebtor && !isCreditor) return null; // Show only relevant distributions for the user
+                    if (!isDebtor && !isCreditor) return null;
 
                     const debtorMember = members.find(m => m.externalId === dist.debtorExternalId);
                     const creditorMember = members.find(m => m.externalId === dist.creditorExternalId);

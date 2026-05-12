@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, Plus } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 import {
   Dialog,
   DialogClose,
@@ -50,7 +51,7 @@ export function GroupsSidebar({ selectedGroupId, onSelectGroup }: GroupsSidebarP
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const joinGroupMutation = useMutation({
+  const joinGroupMutation = useMutation<void, AxiosError<{message: string}>, string>({
     mutationFn: async (inviteCode: string) => {
       await api.post(`/groups/join/${inviteCode}`);
     },
@@ -60,7 +61,7 @@ export function GroupsSidebar({ selectedGroupId, onSelectGroup }: GroupsSidebarP
       setIsDialogOpen(false);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       const backendMessage = error.response?.data?.message;
       toast.error(backendMessage || "Erro ao entrar no rolê.");
     }

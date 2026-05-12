@@ -57,7 +57,7 @@ export function CreateExpenseDialog({ group }: { group: GroupData }) {
 
   const { fields: distributionFields, append: appendDistribution, remove: removeDistribution } = useFieldArray({
     control: form.control,
-    name: "distributions" as never, // To handle optional array
+    name: "distributions" as never,
   });
 
   const createExpenseMutation = useMutation({
@@ -85,7 +85,6 @@ export function CreateExpenseDialog({ group }: { group: GroupData }) {
   });
 
   const onSubmit = (data: ExpenseFormValues) => {
-    // Validate sums
     const totalContributions = data.contributions.reduce((acc, curr) => acc + curr.value, 0);
     if (Math.abs(totalContributions - data.totalValue) > 0.01) {
       form.setError("totalValue", { type: "manual", message: "A soma dos pagamentos deve ser igual ao valor total" });

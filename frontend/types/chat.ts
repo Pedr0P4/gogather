@@ -42,16 +42,31 @@ export interface GroupMemberDTO {
   email: string;
 }
 
+export interface Sort {
+  empty: boolean;
+  sorted: boolean;
+  unsorted: boolean;
+}
+
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: Sort;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
 export interface PaginatedChatHistory {
   content: ChatMessage[];
-  pageable: any;
+  pageable: Pageable;
   last: boolean;
   totalPages: number;
   totalElements: number;
   first: boolean;
   size: number;
   number: number;
-  sort: any;
+  sort: Sort;
   numberOfElements: number;
   empty: boolean;
 }
