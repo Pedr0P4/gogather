@@ -131,4 +131,17 @@ public class GroupController {
         groupService.addEventStopFromPlace(groupId, placeId, user);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{groupId}/expenses")
+    public ResponseEntity<List<ExpenseResponse>> getGroupExpenses(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID groupId
+    ) {
+        // Optionally verify if user is part of the group first. 
+        // groupService.getGroupDetails will throw if not a member.
+        groupService.getGroupDetails(groupId, user.getId());
+
+        List<ExpenseResponse> expenses = expenseService.getGroupExpenses(groupId, user.getId());
+        return ResponseEntity.ok(expenses);
+    }
 }

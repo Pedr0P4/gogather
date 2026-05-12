@@ -114,3 +114,27 @@ export interface UserData {
   email: string;
   birthDate: Date;
 }
+
+export interface ExpenseContribution {
+  expenseContributionExternalId: string;
+  value: number;
+  payerExternalId: string;
+  parentExpenseExternalId: string;
+}
+
+export interface ExpenseDistribution {
+  expenseDistributionExternalId: string;
+  value: number;
+  status: string;
+  debtorExternalId: string;
+  creditorExternalId: string;
+  parentExpenseExternalId: string;
+}
+
+export interface ExpenseData {
+  expenseExternalId: string;
+  description: string;
+  totalValue: number;
+  contributions: ExpenseContribution[];
+  distributions: ExpenseDistribution[];
+}

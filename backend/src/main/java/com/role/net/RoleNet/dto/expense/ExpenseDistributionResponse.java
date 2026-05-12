@@ -10,6 +10,7 @@ public record ExpenseDistributionResponse(
     Double value,
     SplitStatus status,
     UUID debtorExternalId,
+    UUID creditorExternalId,
     UUID parentExpenseExternalId
 ) {
     public static ExpenseDistributionResponse from(ExpenseDistribution expenseDistribution) {
@@ -17,7 +18,8 @@ public record ExpenseDistributionResponse(
             expenseDistribution.getExternalId(),
             expenseDistribution.getValue()/100.0,
             expenseDistribution.getStatus(),
-            expenseDistribution.getDebtor().getExternalId(),
+            expenseDistribution.getDebtor().getUser().getExternalId(),
+            expenseDistribution.getCreditor().getUser().getExternalId(),
             expenseDistribution.getParentExpense().getExternalId()
         );
     }
