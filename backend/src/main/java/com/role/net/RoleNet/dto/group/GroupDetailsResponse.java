@@ -31,6 +31,7 @@ public record GroupDetailsResponse(
         String category,
         Integer stopOrder,
         String city,
-        String state
+        String state,
+        String placeId
     ) {}
 }

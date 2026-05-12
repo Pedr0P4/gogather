@@ -21,15 +21,19 @@ import com.role.net.RoleNet.exception.UserNotAGroupMemberException;
 import com.role.net.RoleNet.repository.GroupRepository;
 import com.role.net.RoleNet.repository.UserRepository;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 @Service
 public class GroupService {
 
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final PlacesApiService placesApiService;
 
-    public GroupService(GroupRepository groupRepository, UserRepository userRepository) {
+    public GroupService(GroupRepository groupRepository, UserRepository userRepository, PlacesApiService placesApiService) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
+        this.placesApiService = placesApiService;
     }
 
     @Transactional
@@ -126,7 +130,8 @@ public class GroupService {
 				stop.getCategory(),
 				stop.getStopOrder(),
 				stop.getCity(),
-				stop.getState()
+				stop.getState(),
+                stop.getPlaceId()
 			))
 			.toList();
 
@@ -213,5 +218,65 @@ public class GroupService {
         groupRepository.save(group);
     }
 
+    @Transactional
+    public void addEventStopFromPlace(UUID groupId, String placeId, User adminUser) {
+        Group group = groupRepository.findByExternalId(groupId)
+            .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
+        GroupMember adminMember = group.getMembers().stream()
+            .filter(member -> member.getUser().getId().equals(adminUser.getId()))
+            .findFirst()
+            .orElseThrow(() -> new UserNotAGroupMemberException("User is not a member of this group"));
+
+        if (adminMember.getRole() != GroupRole.ADMIN) {
+            throw new InvalidRequestException("Apenas administradores podem adicionar paradas ao roteiro.");
+        }
+
+        JsonNode placeDetails = placesApiService.getPlaceDetails(placeId);
+
+        String name = placeDetails.path("displayName").path("text").asText();
+        double latitude = placeDetails.path("location").path("latitude").asDouble();
+        double longitude = placeDetails.path("location").path("longitude").asDouble();
+        
+        String city = null;
+        String state = null;
+        
+        JsonNode addressComponents = placeDetails.path("addressComponents");
+        if (addressComponents.isArray()) {
+            for (JsonNode comp : addressComponents) {
+                JsonNode types = comp.path("types");
+                if (types.isArray()) {
+                    boolean isCity = false;
+                    boolean isState = false;
+                    for (JsonNode type : types) {
+                        if ("administrative_area_level_2".equals(type.asText()) || "locality".equals(type.asText())) {
+                            isCity = true;
+                        }
+                        if ("administrative_area_level_1".equals(type.asText())) {
+                            isState = true;
+                        }
+                    }
+                    if (isCity && city == null) city = comp.path("longText").asText();
+                    if (isState && state == null) state = comp.path("shortText").asText();
+                }
+            }
+        }
+        
+        int nextOrder = group.getEventStops().size() + 1;
+
+        EventStop stop = EventStop.builder()
+            .name(name)
+            .latitude(latitude)
+            .longitude(longitude)
+            .category("Recomendação da IA")
+            .stopOrder(nextOrder)
+            .city(city)
+            .state(state)
+            .placeId(placeId)
+            .group(group)
+            .build();
+
+        group.getEventStops().add(stop);
+        groupRepository.save(group);
+    }
 }

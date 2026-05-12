@@ -59,7 +59,7 @@ export default function CreateRolePage() {
       setGeneratedInviteCode(data.inviteCode);
       setGeneratedGroupId(data.externalId);
       setStep(3);
-    } catch (error: unknown) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage =
           error.response?.data?.message ||

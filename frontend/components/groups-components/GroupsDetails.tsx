@@ -1,5 +1,5 @@
 import { GroupInfoSection } from "./GroupInfoSection";
-import { GroupBalancePlaceholder } from "./GroupBalancePlaceholder";
+import { GroupExpensesSection } from "./GroupExpensesSection";
 import { GroupParticipantsSection } from "./GroupParticipantsSection";
 
 export function GroupsDetails({ groupId }: { groupId: string }) {
@@ -8,7 +8,7 @@ export function GroupsDetails({ groupId }: { groupId: string }) {
       <div className="p-6 flex flex-col gap-8">
         <GroupInfoSection groupId={groupId} />
         <hr className="border-gray-100" />
-        <GroupBalancePlaceholder />
+        <GroupExpensesSection groupId={groupId} />
         <hr className="border-gray-100" />
         <GroupParticipantsSection groupId={groupId} />
       </div>

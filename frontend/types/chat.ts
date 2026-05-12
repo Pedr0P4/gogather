@@ -26,9 +26,13 @@ export interface TypingEvent {
 
 export interface EventStopDTO {
   name: string;
-  category: string;
   latitude: number;
   longitude: number;
+  category: string;
+  stopOrder: number;
+  city: string;
+  state: string;
+  placeId?: string;
 }
 
 export interface GroupDetails {
@@ -39,7 +43,7 @@ export interface GroupDetails {
   createdAt: string;
   eventDate: string;
   members: GroupMemberDTO[];
-  eventStops?: EventStopDTO[];
+  eventStops: EventStopDTO[];
 }
 
 export interface GroupMemberDTO {
@@ -50,16 +54,31 @@ export interface GroupMemberDTO {
   email: string;
 }
 
+export interface Sort {
+  empty: boolean;
+  sorted: boolean;
+  unsorted: boolean;
+}
+
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: Sort;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
 export interface PaginatedChatHistory {
   content: ChatMessage[];
-  pageable: any;
+  pageable: Pageable;
   last: boolean;
   totalPages: number;
   totalElements: number;
   first: boolean;
   size: number;
   number: number;
-  sort: any;
+  sort: Sort;
   numberOfElements: number;
   empty: boolean;
 }

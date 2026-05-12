@@ -14,7 +14,7 @@ public record ExpenseContributionResponse(
         return new ExpenseContributionResponse(
             expenseContribution.getExternalId(),
             expenseContribution.getValue()/100.0,
-            expenseContribution.getPayer().getExternalId(),
+            expenseContribution.getPayer().getUser().getExternalId(),
             expenseContribution.getParentExpense().getExternalId()
         );
     }

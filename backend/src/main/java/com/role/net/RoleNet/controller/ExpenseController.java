@@ -36,7 +36,7 @@ public class ExpenseController {
     @GetMapping("/split/{splitId}/pix-code")
     public ResponseEntity<ExpenseDistributionPixResponse> generatePixCode(
         @AuthenticationPrincipal User user,
-        @PathVariable UUID splitId
+        @PathVariable("splitId") UUID splitId
     ) {
         ExpenseDistribution expenseDistribution = expenseService.findExpenseDistributionByExternalId(splitId);
 
@@ -62,7 +62,7 @@ public class ExpenseController {
     @PatchMapping("/split/{splitId}/mark-as-paid")
     public ResponseEntity<Void> markSplitAsPaid(
         @AuthenticationPrincipal User user,
-        @PathVariable UUID splitExternalId
+        @PathVariable("splitId") UUID splitExternalId
     ) {
         expenseService.markAsPaid(
             user.getId(),
@@ -74,7 +74,7 @@ public class ExpenseController {
     @PatchMapping("/split/{splitId}/confirm-receipt")
     public ResponseEntity<Void> markSplitAsSettled(
         @AuthenticationPrincipal User user,
-        @PathVariable UUID splitExternalId
+        @PathVariable("splitId") UUID splitExternalId
     ) {
         expenseService.confirmReceipt(
             user.getId(),
