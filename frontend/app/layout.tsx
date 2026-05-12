@@ -31,6 +31,8 @@ const jakartaSans = localFont({
   variable: '--font-jakarta',
 });
 
+import { Toaster } from 'sonner';
+
 export default function RootLayout({
   children,
 }: {
@@ -42,8 +44,9 @@ export default function RootLayout({
         <Providers>
           <AuthProvider>
                	{children}
-        		</AuthProvider>
+          </AuthProvider>
         </Providers>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

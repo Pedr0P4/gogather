@@ -117,6 +117,10 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ externalId }) => {
           typingUsers={typingUsers} 
           onVote={handleVote} 
           totalMembers={groupDetails?.members.length || 0}
+          isAdmin={groupDetails?.members.find(m => m.username === user?.username)?.role === "ADMIN"}
+          groupId={externalId}
+          onStopAdded={fetchGroupDetails}
+          addedPlaceIds={groupDetails?.eventStops?.map(s => s.placeId).filter(Boolean) as string[] || []}
         />
       </div>
 
