@@ -120,5 +120,15 @@ public class GroupController {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(ExpenseResponse.from(expense));
+	}
+	
+    @PostMapping("/{groupId}/stops/from-place/{placeId}")
+    public ResponseEntity<Void> addStopFromPlace(
+        @AuthenticationPrincipal User user,
+        @PathVariable UUID groupId,
+        @PathVariable String placeId
+    ) {
+        groupService.addEventStopFromPlace(groupId, placeId, user);
+        return ResponseEntity.ok().build();
     }
 }

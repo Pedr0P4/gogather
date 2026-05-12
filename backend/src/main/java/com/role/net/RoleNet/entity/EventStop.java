@@ -42,4 +42,7 @@ public class EventStop extends BaseEntity {
     private String city;
 
     private String state;
+
+    @Column(name = "place_id")
+    private String placeId;
 }

@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class PlacesApiService {
 
@@ -32,6 +35,22 @@ public class PlacesApiService {
 
         } catch (Exception e) {
             return "Não foi possível encontrar locais no momento. Erro: " + e.getMessage();
+        }
+    }
+
+    public JsonNode getPlaceDetails(String placeId) {
+        try {
+            String responseStr = restClient.get()
+                    .uri("https://places.googleapis.com/v1/places/" + placeId)
+                    .header("X-Goog-Api-Key", apiKey)
+                    .header("X-Goog-FieldMask", "id,displayName,formattedAddress,location,addressComponents")
+                    .retrieve()
+                    .body(String.class);
+
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readTree(responseStr);
+        } catch (Exception e) {
+            throw new RuntimeException("Falha ao buscar detalhes do local no Google: " + e.getMessage());
         }
     }
 }
