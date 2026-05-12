@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/hover-card"
 import { Button } from "@/components/ui/button"
 import {
+  DropdownMenuLabel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -65,6 +66,7 @@ export default function Sidebar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent side='right'>
             <DropdownMenuGroup>
+              <DropdownMenuLabel>{user?.displayName || user?.username}</DropdownMenuLabel>
               <DropdownMenuItem>
                 <UserRoundSearch />
                 Perfil
